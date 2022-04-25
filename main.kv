@@ -1,0 +1,45 @@
+<MainLayout>:
+    # just make bg white
+    canvas.before:
+        Color:
+            rgba: 1, 1, 1, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    cols: 2
+
+    # here we will have settings
+    GridLayout:
+        canvas.before:
+            Color:
+                rgba: .8, .8, .8, 1
+            Rectangle:
+                pos: self.pos
+                size: self.size
+
+        size_hint: 0.3, 1
+
+    # working part
+    GridLayout:
+        rows: 2
+
+        # here we will have current solving status
+        FloatLayout:
+            canvas.before:
+                Color:
+                    rgba: .8, 0, 0, 1
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+
+            size_hint: 1, 0.2
+
+        # here - automaton solving graphics
+        FloatLayout:
+            canvas.before:
+                Color:
+                    rgba: 0, .8, 0, 1
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
