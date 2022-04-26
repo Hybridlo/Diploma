@@ -1,3 +1,5 @@
+#:include automata_graph/graph_container.kv
+
 <MainLayout>:
     # just make bg white
     canvas.before:
@@ -35,13 +37,15 @@
                     pos: self.pos
                     size: self.size
 
-            size_hint: 1, 0.2
+            size_hint: 1, .2
 
         # here - automaton solving graphics
-        FloatLayout:
-            canvas.before:
-                Color:
-                    rgba: 0, .8, 0, 1
-                Rectangle:
-                    pos: self.pos
-                    size: self.size
+        RelativeLayout:
+            StencilView:
+                canvas:
+                    Color:
+                        rgba: 0, .4, 0, 1
+                    Rectangle:
+                        pos: 0, 0
+                        size: self.size
+                GraphContainer:

@@ -5,6 +5,8 @@ from kivy.config import Config
 Config.set('graphics', 'width', '1600')
 Config.set('graphics', 'height', '900')
 
+from automata_graph.graph_container import GraphContainer
+
 
 class MainLayout(GridLayout):
     pass

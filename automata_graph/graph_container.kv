@@ -1,0 +1,17 @@
+<GraphContainer>:
+    size_hint: None, None
+    width: 2000
+    height: 1000
+    canvas:
+        Color:
+            rgba: 0, .8, 0, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+        Color:
+            rgba: 0, 0, 0, 1
+        Line:
+            width: 5
+            rectangle: self.x, self.y, self.width, self.height
+    drag_rect_width: self.parent.width
+    drag_rect_height: self.parent.height
