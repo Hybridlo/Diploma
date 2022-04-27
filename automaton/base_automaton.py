@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import abc
 import typing
+import typing_extensions
 
 _T = typing.TypeVar("_T", bound="AbstractState")
 
@@ -11,20 +12,24 @@ class AbstractState(abc.ABC):
 
     is_accepting: typing.Optional[bool]
 
-    def __init__(self):
+    def __init__(self, parent_automaton: AbstractAutomaton):
         self.is_accepting: typing.Optional[bool] = None
-        self.transitions: typing.Dict[str, typing.Tuple[AbstractState, typing.Optional[str]]] = {}
+        self.transitions: typing.Dict[str, typing.Tuple[typing_extensions.Self, typing.Optional[str]]] = {}
+        self.parent_automaton: AbstractAutomaton = parent_automaton     #idk if i need it, but i do need a counter for them
+        self.my_number = parent_automaton.state_counter
+        parent_automaton.state_counter += 1
 
-    def set_transition(self, transition_input: str, to_state: AbstractState, transition_output: typing.Optional[str] = None):
+    def set_transition(self, transition_input: str, to_state: typing_extensions.Self, transition_output: typing.Optional[str] = None):
         self.transitions[transition_input] = (to_state, transition_output)
 
 
 class AbstractAutomaton(typing.Generic[_T]):
-    def __init__(self, initial_state: _T):
+    def __init__(self, initial_state_cls: typing.Type[_T], *args, **kwargs):
         """call super().__init__() before
         doing anything in inherited init"""
-        self.initial_state = initial_state
-        self.current_state: typing.Optional[_T] = initial_state
+        self.state_counter: int = 0
+        self.initial_state = initial_state_cls(self, *args, **kwargs)
+        self.current_state: typing.Optional[_T] = self.initial_state
 
     def change_state(self, inp: str) -> typing.Optional[str]:
         """changes current state of the automaton

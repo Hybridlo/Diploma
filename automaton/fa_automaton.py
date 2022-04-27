@@ -7,12 +7,15 @@ from automaton.base_automaton import AbstractState, AbstractAutomaton
 class FAState(AbstractState):
     is_accepting: bool
 
-    def __init__(self, is_accepting: bool, result: typing.Optional[str] = None):
-        super().__init__()
+    def __init__(self, parent_automaton: FAAutomaton, is_accepting: bool, result: typing.Optional[str] = None):
+        super().__init__(parent_automaton)
         self.is_accepting = is_accepting
         self.result = result
 
 class FAAutomaton(AbstractAutomaton[FAState]):
+    def __init__(self, initial_state_cls: typing.Type[FAState], is_initial_accepting: bool):
+        super().__init__(initial_state_cls, is_initial_accepting)
+        
     def check_accepting(self):
         if not self.current_state:
             return False

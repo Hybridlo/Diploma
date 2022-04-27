@@ -3,3 +3,5 @@ kivy-deps.angle==0.3.2
 kivy-deps.glew==0.3.1
 kivy-deps.sdl2==0.4.5
 Kivy-Garden==0.1.4
+pygraphviz==1.7
+networkx==2.6.3
