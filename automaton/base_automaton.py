@@ -5,17 +5,18 @@ import typing
 import typing_extensions
 
 _T = typing.TypeVar("_T", bound="AbstractState")
+_D = typing.TypeVar("_D", bound="AbstractAutomaton")
 
-class AbstractState(abc.ABC):
+class AbstractState(typing.Generic[_D]):
     """Defines abstract automaton state
     override is_accepting to make automata an FA"""
 
     is_accepting: typing.Optional[bool]
 
-    def __init__(self, parent_automaton: AbstractAutomaton):
+    def __init__(self, parent_automaton: _D):
         self.is_accepting: typing.Optional[bool] = None
         self.transitions: typing.Dict[str, typing.Tuple[typing_extensions.Self, typing.Optional[str]]] = {}
-        self.parent_automaton: AbstractAutomaton = parent_automaton     #idk if i need it, but i do need a counter for them
+        self.parent_automaton: _D = parent_automaton     #idk if i need it, but i do need a counter for them
         self.my_number = parent_automaton.state_counter
         parent_automaton.state_counter += 1
 
