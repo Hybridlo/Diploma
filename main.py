@@ -1,19 +1,36 @@
-from kivy.app import App
-from kivy.uix.gridlayout import GridLayout
+import sys
+from PyQt6.QtWidgets import (
+    QApplication, QDialog, QMainWindow, QMessageBox
+)
+from automata_graph.graph_render import RenderedAutomaton
+from automaton.fa_automaton import FAAutomaton, FAState
+from automata_graph.ui_renderer import render_svg_animation
 
-from kivy.config import Config
-Config.set('graphics', 'width', '1600')
-Config.set('graphics', 'height', '900')
+from main_ui import Ui_MainWindow
 
-from automata_graph.graph_container import GraphContainer
+class Window(QMainWindow, Ui_MainWindow):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.setupUi(self)
 
+    def execute_test(self):
+        automaton = FAAutomaton(FAState, False)
 
-class MainLayout(GridLayout):
-    pass
+        initial_state = automaton.initial_state
+        q1 = FAState(automaton, False)
+        q2 = FAState(automaton, True, "Done!")
 
-class MainApp(App):
-    def build(self):
-        return MainLayout()
+        initial_state.set_transition("0", initial_state)
+        initial_state.set_transition("1", q1)
+        q1.set_transition("1", q2)
+        q2.set_transition("1", q2)
+
+        r_automaton = RenderedAutomaton(automaton)
+
+        render_svg_animation(r_automaton, self.widget_5, "0|1|1")
 
 if __name__ == "__main__":
-    MainApp().run()
+    app = QApplication(sys.argv)
+    win = Window()
+    win.show()
+    sys.exit(app.exec())

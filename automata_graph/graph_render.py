@@ -33,12 +33,12 @@ class RenderedAutomaton(typing.Generic[_T]):
 
         agraph = to_agraph(graph)
         agraph.layout(prog="fdp")
+        xml_string = agraph.draw(format="svg").decode('utf-8').replace("transparent", "none")
         self.xml_root = cET.fromstring(agraph.draw(format="svg").decode('utf-8'))
 
-    def render_step(self, transition: typing.Optional[str] = None) -> cET.Element:
+    def render_step(self, transition: typing.Optional[str] = None) -> bytes:
         ns = {"ns":self.xml_root.tag.split("}")[0].strip("{")}
         dupe_xml = copy.deepcopy(self.xml_root)
-        #print(cET.tostring(dupe_xml).decode('utf-8'))
 
         if not self.automaton.current_state:
             raise Exception("Transition render failure!")
@@ -54,4 +54,4 @@ class RenderedAutomaton(typing.Generic[_T]):
             dupe_xml.findall(f".//*[@id='edge{target_edge}']/ns:polygon",ns)[0].attrib["fill"] = "red"
             dupe_xml.findall(f".//*[@id='edge{target_edge}']/ns:text",ns)[0].attrib["fill"] = "red"
 
-        return dupe_xml
+        return cET.tostring(dupe_xml)

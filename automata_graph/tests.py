@@ -21,7 +21,7 @@ class RendererTestCase(unittest.TestCase):
 
         r_automaton = RenderedAutomaton(automaton)
 
-        steps_imgs: typing.List[cET.Element] = []
+        steps_imgs: typing.List[bytes] = []
 
         input_step = "0"
         steps_imgs.append(r_automaton.render_step())
@@ -45,4 +45,4 @@ class RendererTestCase(unittest.TestCase):
         for img in steps_imgs:
             counter += 1
             with open(f"data_tests/step{counter}.svg", "r") as infile:
-                self.assertEqual(cET.tostring(img).decode("utf-8"), infile.read())
+                self.assertEqual(img.decode("utf-8"), infile.read())
