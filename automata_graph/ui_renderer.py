@@ -2,8 +2,6 @@ from __future__ import annotations
 
 import typing
 from functools import partial
-from PyQt6.QtWidgets import QApplication
-from PyQt6 import (QtSvg, QtGui)
 from PyQt6.QtCore import (QByteArray, QTimer)
 
 if typing.TYPE_CHECKING:
@@ -28,4 +26,4 @@ def render_svg_animation(r_automaton: RenderedAutomaton, target_widget: QSvgWidg
 
     target_widget.load(QByteArray(xml_data))    # type: ignore
 
-    QTimer.singleShot(1000, partial(render_svg_animation, r_automaton, target_widget, input, not transition))
+    QTimer.singleShot(2000, partial(render_svg_animation, r_automaton, target_widget, input, not transition))
