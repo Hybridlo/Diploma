@@ -1,4 +1,7 @@
 import sys
+import typing
+from functools import partial
+from PyQt6 import QtCore
 from PyQt6.QtWidgets import (
     QApplication, QDialog, QMainWindow, QMessageBox
 )
@@ -6,12 +9,21 @@ from automata_graph.graph_render import RenderedAutomaton
 from automaton.fa_automaton import FAAutomaton, FAState
 from automata_graph.ui_renderer import render_svg_animation
 
+from widgets.vectordefined import VectorDefined
+
 from main_ui import Ui_MainWindow
 
 class Window(QMainWindow, Ui_MainWindow):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setupUi(self)
+        self.defined_vectors: typing.List[VectorDefined] = []
+
+    def setupUi(self, MainWindow):
+        super().setupUi(MainWindow)
+        self.add_vector_button.setDisabled(True)
+        self.lock_pivot_button.setDisabled(True)
+        self.pivot_vector.line_edits[0].editingFinished.connect(self.lock_button_react)
 
     def execute_test(self):
         automaton = FAAutomaton(FAState, False)
@@ -28,6 +40,52 @@ class Window(QMainWindow, Ui_MainWindow):
         r_automaton = RenderedAutomaton(automaton)
 
         render_svg_animation(r_automaton, self.widget_5, "0|1|1")
+
+    def lock_button_react(self):
+        first_vector_line_edit = self.pivot_vector.line_edits[0]
+
+        if first_vector_line_edit.text():
+            self.lock_pivot_button.setDisabled(False)
+        else:
+            self.lock_pivot_button.setDisabled(True)
+
+    def lock_pivot(self):
+        if not self.pivot_vector.check_all_filled():
+            _translate = QtCore.QCoreApplication.translate
+            QMessageBox.warning(self, _translate("MainWindow", "Locking failed"), _translate("MainWindow", "Make sure all vector fields have numbers"))
+            return
+
+        last_line_edit = self.pivot_vector.line_edits[-1]
+        _translate = QtCore.QCoreApplication.translate
+        self.vector_definer.resize_vector(self.pivot_vector.vector_size)
+
+        if last_line_edit.isEnabled():
+            self.lock_pivot_button.setText(_translate("MainWindow", "Unlock"))
+            self.pivot_vector.set_disable_input(True)
+            self.vector_definer.set_disable_input(False)
+            self.add_vector_button.setDisabled(False)
+            self.vector_definer.fill_default()
+        else:
+            self.lock_pivot_button.setText(_translate("MainWindow", "Lock"))
+            self.pivot_vector.set_disable_input(False)
+            self.vector_definer.set_disable_input(True)
+            self.add_vector_button.setDisabled(True)
+
+
+    def remove_vector(self, defined_vector: VectorDefined):
+        self.defined_vectors.remove(defined_vector)
+        defined_vector.deleteLater()
+
+    def add_vector(self):
+        if not self.vector_definer.check_all_filled():
+            _translate = QtCore.QCoreApplication.translate
+            QMessageBox.warning(self, _translate("MainWindow", "Adding failed"), _translate("MainWindow", "Make sure all vector fields have numbers"))
+            return
+
+        new_defined_vector = VectorDefined(self.vector_definer.vector_data, self.added_vectors_area)
+        self.added_vectors_layout.addWidget(new_defined_vector)
+        new_defined_vector.pushButton.clicked.connect(partial(self.remove_vector, new_defined_vector))
+        self.defined_vectors.append(new_defined_vector)
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

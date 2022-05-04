@@ -103,7 +103,7 @@
                 </property>
                 <layout class="QHBoxLayout" name="horizontalLayout_8">
                  <item alignment="Qt::AlignLeft">
-                  <widget class="VectorDefiner" name="widget_14" native="true">
+                  <widget class="VectorDefinerAutoextend" name="pivot_vector" native="true">
                    <property name="sizePolicy">
                     <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                      <horstretch>0</horstretch>
@@ -163,7 +163,7 @@
               </widget>
              </item>
              <item>
-              <widget class="QPushButton" name="pushButton_2">
+              <widget class="QPushButton" name="lock_pivot_button">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
                  <horstretch>1</horstretch>
@@ -245,7 +245,7 @@
                 </property>
                 <layout class="QHBoxLayout" name="horizontalLayout_11">
                  <item alignment="Qt::AlignLeft">
-                  <widget class="VectorDefiner" name="widget_16" native="true">
+                  <widget class="VectorDefinerFixed" name="vector_definer" native="true">
                    <property name="sizePolicy">
                     <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                      <horstretch>0</horstretch>
@@ -305,7 +305,7 @@
               </widget>
              </item>
              <item>
-              <widget class="QPushButton" name="pushButton_3">
+              <widget class="QPushButton" name="add_vector_button">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
                  <horstretch>1</horstretch>
@@ -350,10 +350,10 @@
             <widget class="QWidget" name="scrollAreaWidgetContents_8">
              <property name="geometry">
               <rect>
-               <x>-60</x>
+               <x>0</x>
                <y>0</y>
-               <width>461</width>
-               <height>471</height>
+               <width>366</width>
+               <height>488</height>
               </rect>
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_9">
@@ -373,8 +373,8 @@
                <number>0</number>
               </property>
               <item alignment="Qt::AlignTop">
-               <widget class="QWidget" name="widget_8" native="true">
-                <layout class="QVBoxLayout" name="verticalLayout_10">
+               <widget class="QWidget" name="added_vectors_area" native="true">
+                <layout class="QVBoxLayout" name="added_vectors_layout">
                  <property name="spacing">
                   <number>2</number>
                  </property>
@@ -390,44 +390,6 @@
                  <property name="bottomMargin">
                   <number>4</number>
                  </property>
-                 <item>
-                  <widget class="QWidget" name="widget_9" native="true">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <layout class="QHBoxLayout" name="horizontalLayout_15">
-                    <item>
-                     <widget class="QPushButton" name="pushButton_5">
-                      <property name="sizePolicy">
-                       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                        <horstretch>0</horstretch>
-                        <verstretch>0</verstretch>
-                       </sizepolicy>
-                      </property>
-                      <property name="text">
-                       <string>Remove</string>
-                      </property>
-                     </widget>
-                    </item>
-                    <item>
-                     <widget class="QLabel" name="label_4">
-                      <property name="maximumSize">
-                       <size>
-                        <width>16777215</width>
-                        <height>23</height>
-                       </size>
-                      </property>
-                      <property name="text">
-                       <string>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</string>
-                      </property>
-                     </widget>
-                    </item>
-                   </layout>
-                  </widget>
-                 </item>
                 </layout>
                </widget>
               </item>
@@ -516,7 +478,13 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>VectorDefiner</class>
+   <class>VectorDefinerAutoextend</class>
+   <extends>QWidget</extends>
+   <header>widgets/vectordefiner.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>VectorDefinerFixed</class>
    <extends>QWidget</extends>
    <header>widgets/vectordefiner.h</header>
    <container>1</container>
@@ -531,8 +499,8 @@
    <slot>execute_test()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>458</x>
-     <y>255</y>
+     <x>581</x>
+     <y>295</y>
     </hint>
     <hint type="destinationlabel">
      <x>292</x>
@@ -540,8 +508,42 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>add_vector_button</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>add_vector()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>351</x>
+     <y>275</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>402</x>
+     <y>6</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>lock_pivot_button</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>lock_pivot()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>331</x>
+     <y>130</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>499</x>
+     <y>7</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>execute_test()</slot>
+  <slot>add_vector()</slot>
+  <slot>lock_pivot()</slot>
  </slots>
 </ui>
