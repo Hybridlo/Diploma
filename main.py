@@ -3,13 +3,15 @@ import typing
 from functools import partial
 from PyQt6 import QtCore
 from PyQt6.QtWidgets import (
-    QApplication, QDialog, QMainWindow, QMessageBox
+    QApplication, QDialog, QMainWindow, QMessageBox, QWidget
 )
 from automata_graph.graph_render import RenderedAutomaton
 from automaton.fa_automaton import FAAutomaton, FAState
-from automata_graph.ui_renderer import render_svg_animation
+from automata_graph.automata_renderer import render_svg_step
+from widgets.progressholders import VectorComparingProgress
 
 from widgets.vectordefined import VectorDefined
+from widgets.resultholders import FourBasketResultHolder
 
 from main_ui import Ui_MainWindow
 
@@ -18,6 +20,8 @@ class Window(QMainWindow, Ui_MainWindow):
         super().__init__(parent)
         self.setupUi(self)
         self.defined_vectors: typing.List[VectorDefined] = []
+        self.result_widget: typing.Optional[QWidget] = None     #prob still need an abstract for this
+        self.progress_widget: typing.Optional[QWidget] = None
 
     def setupUi(self, MainWindow):
         super().setupUi(MainWindow)
@@ -39,7 +43,7 @@ class Window(QMainWindow, Ui_MainWindow):
 
         r_automaton = RenderedAutomaton(automaton)
 
-        render_svg_animation(r_automaton, self.widget_5, "0|1|1")
+        render_svg_step(r_automaton, self.svg_widget, "0|1|1")
 
     def lock_button_react(self):
         first_vector_line_edit = self.pivot_vector.line_edits[0]
@@ -86,6 +90,14 @@ class Window(QMainWindow, Ui_MainWindow):
         self.added_vectors_layout.addWidget(new_defined_vector)
         new_defined_vector.pushButton.clicked.connect(partial(self.remove_vector, new_defined_vector))
         self.defined_vectors.append(new_defined_vector)
+
+    def run_automata(self):
+        self.run_button.setDisabled(True)
+        self.add_vector_button.setDisabled(True)
+        self.result_widget = FourBasketResultHolder(self.result_widget_holder)
+        self.result_layout_holder.addWidget(self.result_widget)
+        self.progress_widget = VectorComparingProgress(self.solving_progress_holder)
+        self.solving_progress_layout.addWidget(self.progress_widget)
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

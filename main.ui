@@ -398,7 +398,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="pushButton_4">
+           <widget class="QPushButton" name="run_button">
             <property name="text">
              <string>Run!</string>
             </property>
@@ -420,13 +420,30 @@
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_4">
        <item>
-        <widget class="QWidget" name="widget_3" native="true">
+        <widget class="QWidget" name="result_widget_holder" native="true">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
            <horstretch>0</horstretch>
            <verstretch>4</verstretch>
           </sizepolicy>
          </property>
+         <layout class="QHBoxLayout" name="result_layout_holder">
+          <property name="spacing">
+           <number>0</number>
+          </property>
+          <property name="leftMargin">
+           <number>0</number>
+          </property>
+          <property name="topMargin">
+           <number>0</number>
+          </property>
+          <property name="rightMargin">
+           <number>0</number>
+          </property>
+          <property name="bottomMargin">
+           <number>0</number>
+          </property>
+         </layout>
         </widget>
        </item>
        <item>
@@ -455,7 +472,34 @@
         </widget>
        </item>
        <item>
-        <widget class="QSvgWidget" name="widget_5" native="true">
+        <widget class="QWidget" name="solving_progress_holder" native="true">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>2</verstretch>
+          </sizepolicy>
+         </property>
+         <layout class="QHBoxLayout" name="solving_progress_layout">
+          <property name="spacing">
+           <number>0</number>
+          </property>
+          <property name="leftMargin">
+           <number>0</number>
+          </property>
+          <property name="topMargin">
+           <number>0</number>
+          </property>
+          <property name="rightMargin">
+           <number>0</number>
+          </property>
+          <property name="bottomMargin">
+           <number>0</number>
+          </property>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QSvgWidget" name="svg_widget" native="true">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
            <horstretch>0</horstretch>
@@ -540,10 +584,27 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>run_button</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>run_automata()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>96</x>
+     <y>831</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>56</x>
+     <y>855</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>execute_test()</slot>
   <slot>add_vector()</slot>
   <slot>lock_pivot()</slot>
+  <slot>run_automata()</slot>
  </slots>
 </ui>

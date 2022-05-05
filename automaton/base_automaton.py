@@ -23,6 +23,9 @@ class AbstractState(typing.Generic[_D]):
     def set_transition(self, transition_input: str, to_state: typing_extensions.Self, transition_output: typing.Optional[str] = None):
         self.transitions[transition_input] = (to_state, transition_output)
 
+    def __hash__(self) -> int:
+        return self.my_number.__hash__()
+
 
 class AbstractAutomaton(typing.Generic[_T]):
     def __init__(self, initial_state_cls: typing.Type[_T], *args, **kwargs):
