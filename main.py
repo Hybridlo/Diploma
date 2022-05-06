@@ -7,7 +7,7 @@ from PyQt6.QtWidgets import (
 )
 from automata_graph.graph_render import RenderedAutomaton
 from automaton.fa_automaton import FAAutomaton, FAState
-from automata_graph.automata_renderer import render_svg_step
+from automata_graph.automata_renderer import VectorComparatorByCoordinate, render_svg_step
 from widgets.progressholders import VectorComparingProgress
 
 from widgets.vectordefined import VectorDefined
@@ -98,6 +98,8 @@ class Window(QMainWindow, Ui_MainWindow):
         self.result_layout_holder.addWidget(self.result_widget)
         self.progress_widget = VectorComparingProgress(self.solving_progress_holder)
         self.solving_progress_layout.addWidget(self.progress_widget)
+        self.solver = VectorComparatorByCoordinate(self, self.progress_widget, self.result_widget)
+        self.solver.solution_step()
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

@@ -1,4 +1,5 @@
 import typing
+import typing_extensions
 from PyQt6.QtWidgets import (
     QWidget, QHBoxLayout, QSizePolicy, QLabel, QVBoxLayout, QScrollArea
 )
@@ -8,6 +9,27 @@ class FourBasketResultHolder(QWidget):
     def __init__(self, parent: typing.Optional['QWidget'] = ...) -> None:
         super().__init__(parent)
         self.setup_ui()
+
+    def add_result(self, vector: typing.List[int], basket: typing_extensions.Literal[1, 2, 3, 4]):
+        if basket == 1:
+            new_label_vector = QLabel(self.v1_container)
+            self.v1_layout.addWidget(new_label_vector)
+            new_label_vector.setText(f"({', '.join(str(a) for a in vector)})")
+        
+        elif basket == 2:
+            new_label_vector = QLabel(self.v2_container)
+            self.v2_layout.addWidget(new_label_vector)
+            new_label_vector.setText(f"({', '.join(str(a) for a in vector)})")
+        
+        elif basket == 3:
+            new_label_vector = QLabel(self.v3_container)
+            self.v3_layout.addWidget(new_label_vector)
+            new_label_vector.setText(f"({', '.join(str(a) for a in vector)})")
+        
+        elif basket == 4:
+            new_label_vector = QLabel(self.v4_container)
+            self.v4_layout.addWidget(new_label_vector)
+            new_label_vector.setText(f"({', '.join(str(a) for a in vector)})")
 
     def setup_ui(self):
         sizePolicy = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Preferred)
@@ -38,8 +60,8 @@ class FourBasketResultHolder(QWidget):
         self.verticalLayout_2.setObjectName("verticalLayout_17")
         self.v1_container = QWidget(self.scrollAreaWidgetContents)
         self.v1_container.setObjectName("v1_container")
-        self.verticalLayout_3 = QVBoxLayout(self.v1_container)
-        self.verticalLayout_3.setObjectName("verticalLayout_18")
+        self.v1_layout = QVBoxLayout(self.v1_container)
+        self.v1_layout.setObjectName("verticalLayout_18")
         self.verticalLayout_2.addWidget(self.v1_container, 0, QtCore.Qt.AlignmentFlag.AlignTop)
         self.scrollArea.setWidget(self.scrollAreaWidgetContents)
         self.verticalLayout.addWidget(self.scrollArea)
@@ -64,8 +86,8 @@ class FourBasketResultHolder(QWidget):
         self.verticalLayout_5.setObjectName("verticalLayout_16")
         self.v2_container = QWidget(self.scrollAreaWidgetContents_2)
         self.v2_container.setObjectName("v2_container")
-        self.verticalLayout_6 = QVBoxLayout(self.v2_container)
-        self.verticalLayout_6.setObjectName("verticalLayout_19")
+        self.v2_layout = QVBoxLayout(self.v2_container)
+        self.v2_layout.setObjectName("verticalLayout_19")
         self.verticalLayout_5.addWidget(self.v2_container, 0, QtCore.Qt.AlignmentFlag.AlignTop)
         self.scrollArea_2.setWidget(self.scrollAreaWidgetContents_2)
         self.verticalLayout_4.addWidget(self.scrollArea_2)
@@ -90,8 +112,8 @@ class FourBasketResultHolder(QWidget):
         self.verticalLayout_8.setObjectName("verticalLayout_15")
         self.v3_container = QWidget(self.scrollAreaWidgetContents_3)
         self.v3_container.setObjectName("v3_container")
-        self.verticalLayout_9 = QVBoxLayout(self.v3_container)
-        self.verticalLayout_9.setObjectName("verticalLayout_20")
+        self.v3_layout = QVBoxLayout(self.v3_container)
+        self.v3_layout.setObjectName("verticalLayout_20")
         self.verticalLayout_8.addWidget(self.v3_container, 0, QtCore.Qt.AlignmentFlag.AlignTop)
         self.scrollArea_3.setWidget(self.scrollAreaWidgetContents_3)
         self.verticalLayout_7.addWidget(self.scrollArea_3)
@@ -116,8 +138,8 @@ class FourBasketResultHolder(QWidget):
         self.verticalLayout_11.setObjectName("verticalLayout_14")
         self.v4_container = QWidget(self.scrollAreaWidgetContents_4)
         self.v4_container.setObjectName("v4_container")
-        self.verticalLayout_12 = QVBoxLayout(self.v4_container)
-        self.verticalLayout_12.setObjectName("verticalLayout_21")
+        self.v4_layout = QVBoxLayout(self.v4_container)
+        self.v4_layout.setObjectName("verticalLayout_21")
         self.verticalLayout_11.addWidget(self.v4_container, 0, QtCore.Qt.AlignmentFlag.AlignTop)
         self.scrollArea_4.setWidget(self.scrollAreaWidgetContents_4)
         self.verticalLayout_10.addWidget(self.scrollArea_4)
