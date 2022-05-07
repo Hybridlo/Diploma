@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import typing
 from functools import partial
-from PyQt6.QtCore import (QByteArray, QTimer)
+from PyQt6.QtCore import (QByteArray, QTimer, QSize)
 
 from automaton.fa_automaton import FAAutomaton, FAState
 from automata_graph.graph_render import RenderedAutomaton
@@ -177,6 +177,7 @@ class VectorComparatorByCoordinate:
             self.progress_holder.current_binary_comparing.setText(inp)
 
         self.main_window.svg_widget.load(QByteArray(xml_data))    # type: ignore
+        self.main_window.svg_widget.setFixedSize(QSize(*self.solving_automaton.get_size()))
 
         self.transition = not self.transition
     
@@ -194,4 +195,4 @@ class VectorComparatorByCoordinate:
         else:
             self.do_transition()
 
-        QTimer.singleShot(100, self.solution_step)
+        QTimer.singleShot(500, self.solution_step)

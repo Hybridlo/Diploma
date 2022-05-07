@@ -1,6 +1,6 @@
 import typing
 from PyQt6.QtWidgets import (
-    QWidget, QHBoxLayout, QSizePolicy, QLabel, QVBoxLayout, QScrollArea
+    QWidget, QHBoxLayout, QSizePolicy, QLabel, QVBoxLayout
 )
 from PyQt6 import QtCore
 
@@ -51,14 +51,14 @@ class VectorComparingProgress(QWidget):
         self.widget_14.setObjectName("widget_14")
         self.verticalLayout_11 = QVBoxLayout(self.widget_14)
         self.verticalLayout_11.setObjectName("verticalLayout_11")
-        self.current_pivot_vector = QLabel(self.widget_14)
-        self.current_pivot_vector.setText("")
-        self.current_pivot_vector.setObjectName("current_pivot_vector")
-        self.verticalLayout_11.addWidget(self.current_pivot_vector)
         self.current_comparing_vector = QLabel(self.widget_14)
         self.current_comparing_vector.setText("")
         self.current_comparing_vector.setObjectName("current_comparing_vector")
         self.verticalLayout_11.addWidget(self.current_comparing_vector)
+        self.current_pivot_vector = QLabel(self.widget_14)
+        self.current_pivot_vector.setText("")
+        self.current_pivot_vector.setObjectName("current_pivot_vector")
+        self.verticalLayout_11.addWidget(self.current_pivot_vector)
         self.current_comparison_results = QLabel(self.widget_14)
         self.current_comparison_results.setText("")
         self.current_comparison_results.setObjectName("current_comparison_results")
@@ -102,14 +102,14 @@ class VectorComparingProgress(QWidget):
         self.widget_16.setObjectName("widget_16")
         self.verticalLayout_12 = QVBoxLayout(self.widget_16)
         self.verticalLayout_12.setObjectName("verticalLayout_12")
-        self.current_pivot_vector_coordinate = QLabel(self.widget_16)
-        self.current_pivot_vector_coordinate.setText("")
-        self.current_pivot_vector_coordinate.setObjectName("current_pivot_vector_coordinate")
-        self.verticalLayout_12.addWidget(self.current_pivot_vector_coordinate)
         self.current_comparing_vector_coordinate = QLabel(self.widget_16)
         self.current_comparing_vector_coordinate.setText("")
         self.current_comparing_vector_coordinate.setObjectName("current_comparing_vector_coordinate")
         self.verticalLayout_12.addWidget(self.current_comparing_vector_coordinate)
+        self.current_pivot_vector_coordinate = QLabel(self.widget_16)
+        self.current_pivot_vector_coordinate.setText("")
+        self.current_pivot_vector_coordinate.setObjectName("current_pivot_vector_coordinate")
+        self.verticalLayout_12.addWidget(self.current_pivot_vector_coordinate)
         self.current_binary_comparing = QLabel(self.widget_16)
         self.current_binary_comparing.setText("")
         self.current_binary_comparing.setObjectName("current_binary_comparing")

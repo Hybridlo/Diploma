@@ -499,13 +499,46 @@
         </widget>
        </item>
        <item>
-        <widget class="QSvgWidget" name="svg_widget" native="true">
+        <widget class="QScrollArea" name="scrollArea_4">
          <property name="sizePolicy">
-          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
            <horstretch>0</horstretch>
            <verstretch>8</verstretch>
           </sizepolicy>
          </property>
+         <property name="widgetResizable">
+          <bool>true</bool>
+         </property>
+         <widget class="QWidget" name="scrollAreaWidgetContents">
+          <property name="geometry">
+           <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>1162</width>
+            <height>430</height>
+           </rect>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout">
+           <property name="spacing">
+            <number>0</number>
+           </property>
+           <property name="leftMargin">
+            <number>0</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
+           <item alignment="Qt::AlignHCenter|Qt::AlignVCenter">
+            <widget class="QSvgWidget" name="svg_widget" native="true"/>
+           </item>
+          </layout>
+         </widget>
         </widget>
        </item>
       </layout>

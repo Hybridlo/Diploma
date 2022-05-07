@@ -46,7 +46,7 @@ class RenderedAutomaton(typing.Generic[_T]):
         recursive_visit(automaton.initial_state)
 
         agraph = to_agraph(graph)
-        agraph.layout(prog="fdp")
+        agraph.layout(prog="dot")
         self.xml_root = cET.fromstring(agraph.draw(format="svg").decode('utf-8'))
 
     def render_step(self, transition: typing.Optional[str] = None) -> bytes:
@@ -57,7 +57,10 @@ class RenderedAutomaton(typing.Generic[_T]):
             raise Exception("Transition render failure!")
 
         if not transition:
-            dupe_xml.findall(f".//*[@id='node{self.automaton.current_state.my_number}']/ns:ellipse",ns)[0].attrib["stroke"] = "red"
+            ellipses = dupe_xml.findall(f".//*[@id='node{self.automaton.current_state.my_number}']/ns:ellipse",ns)
+            for ellipse in ellipses:
+                ellipse.attrib["stroke"] = "red"
+
             dupe_xml.findall(f".//*[@id='node{self.automaton.current_state.my_number}']/ns:text",ns)[0].attrib["fill"] = "red"
         else:
             target_node = self.automaton.current_state.transitions[transition][0]
@@ -65,6 +68,13 @@ class RenderedAutomaton(typing.Generic[_T]):
             dupe_xml.findall(f".//*[@id='edge{target_edge}']/ns:path",ns)[0].attrib["stroke"] = "red"
             dupe_xml.findall(f".//*[@id='edge{target_edge}']/ns:polygon",ns)[0].attrib["stroke"] = "red"
             dupe_xml.findall(f".//*[@id='edge{target_edge}']/ns:polygon",ns)[0].attrib["fill"] = "red"
-            dupe_xml.findall(f".//*[@id='edge{target_edge}']/ns:text",ns)[0].attrib["fill"] = "red"
+            texts = dupe_xml.findall(f".//*[@id='edge{target_edge}']/ns:text",ns)
+            for text in texts:
+                if text.text and transition in text.text:
+                    text.attrib["fill"] = "red"
 
         return cET.tostring(dupe_xml)
+
+    def get_size(self):
+        scale = 1.5
+        return (int(self.xml_root.attrib["width"].strip("pt")) * scale, int(self.xml_root.attrib["height"].strip("pt")) * scale)
