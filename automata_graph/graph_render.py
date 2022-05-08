@@ -1,5 +1,4 @@
 import copy
-from operator import ne
 import typing
 import xml.etree.cElementTree as cET
 

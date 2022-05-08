@@ -8,13 +8,13 @@ from automaton.fa_automaton import FAAutomaton, FAState
 from automata_graph.graph_render import RenderedAutomaton
 from utils.const import ComparisonValues
 from utils.transformers import transform_number
-from widgets.resultholders import FourBasketResultHolder
+from widgets.vector_compare.resultholders import FourBasketResultHolder
 
 if typing.TYPE_CHECKING:
-    from main import Window
+    from widgets.vector_compare.vectorcomparer import VectorComparer
     from PyQt6.QtWidgets import QWidget
     from PyQt6.QtSvgWidgets import QSvgWidget
-    from widgets.progressholders import VectorComparingProgress
+    from widgets.vector_compare.progressholders import VectorComparingProgress
 
 def render_svg_step(r_automaton: RenderedAutomaton, target_widget: QSvgWidget, input: str, transition: bool = False):
     if not transition:
@@ -37,13 +37,13 @@ def render_svg_step(r_automaton: RenderedAutomaton, target_widget: QSvgWidget, i
     QTimer.singleShot(2000, partial(render_svg_step, r_automaton, target_widget, input, not transition))
 
 class VectorComparatorByCoordinate:
-    def __init__(self, main_window: Window, progress_holder: VectorComparingProgress, result_holder: FourBasketResultHolder):
+    def __init__(self, comparer: VectorComparer, progress_holder: VectorComparingProgress, result_holder: FourBasketResultHolder):
         self.solving_automaton = self._build_solving_automata()
         self.transition = False
-        self.main_window = main_window
+        self.comparer = comparer
         self.progress_holder = progress_holder
         self.result_holder = result_holder
-        self.pivot_vector: typing.List[int] = main_window.pivot_vector.vector_data
+        self.pivot_vector: typing.List[int] = comparer.pivot_vector.vector_data
         self.current_comparing_vector: typing.Optional[typing.List[int]] = None
         self.current_comparing_vector_copy: typing.Optional[typing.List[int]] = None
         self.current_comparison_state: typing.List[str] = []
@@ -99,9 +99,9 @@ class VectorComparatorByCoordinate:
         if self.current_comparing_vector == []:
             self.finalize_vector_compare()
         
-        getting_vector = self.main_window.defined_vectors[0]
+        getting_vector = self.comparer.defined_vectors[0]
 
-        self.pivot_vector = self.main_window.pivot_vector.vector_data
+        self.pivot_vector = self.comparer.pivot_vector.vector_data
         self.progress_holder.current_pivot_vector.setText(f"({', '.join(str(a) for a in self.pivot_vector)})")
 
         self.current_comparing_vector = getting_vector.vector_data
@@ -111,7 +111,7 @@ class VectorComparatorByCoordinate:
         self.current_comparison_state = ['-' for _ in self.current_comparing_vector]
         self.progress_holder.current_comparison_results.setText(f"({', '.join(a for a in self.current_comparison_state)})")
 
-        self.main_window.remove_vector(getting_vector)
+        self.comparer.remove_vector(getting_vector)
 
     def pop_vector_coordinates(self):
         if not self.current_comparing_vector:
@@ -176,13 +176,13 @@ class VectorComparatorByCoordinate:
             self.progress_holder.current_comparing_vector_coordinate.setText(self.current_comparing_coordinate)
             self.progress_holder.current_binary_comparing.setText(inp)
 
-        self.main_window.svg_widget.load(QByteArray(xml_data))    # type: ignore
-        self.main_window.svg_widget.setFixedSize(QSize(*self.solving_automaton.get_size()))
+        self.comparer.main_window.svg_widget.load(QByteArray(xml_data))    # type: ignore
+        self.comparer.main_window.svg_widget.setFixedSize(QSize(*self.solving_automaton.get_size()))
 
         self.transition = not self.transition
     
     def solution_step(self):
-        if not self.main_window.defined_vectors and not self.current_comparing_vector and not self.current_comparing_coordinate:
+        if not self.comparer.defined_vectors and not self.current_comparing_vector and not self.current_comparing_coordinate:
             self.finalize_vector_compare()
             return
 
