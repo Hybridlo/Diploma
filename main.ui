@@ -77,9 +77,9 @@
            <bool>true</bool>
           </property>
           <attribute name="title">
-           <string>Hypersurface compare</string>
+           <string>Hyperplane compare</string>
           </attribute>
-          <layout class="QVBoxLayout" name="verticalLayout_3">
+          <layout class="QVBoxLayout" name="hyperplane_comparer_layout">
            <property name="spacing">
             <number>0</number>
            </property>
@@ -95,9 +95,6 @@
            <property name="bottomMargin">
             <number>0</number>
            </property>
-           <item>
-            <widget class="QWidget" name="widget_9" native="true"/>
-           </item>
           </layout>
          </widget>
         </widget>

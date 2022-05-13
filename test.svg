@@ -1,0 +1,87 @@
+<ns0:svg xmlns:ns0="http://www.w3.org/2000/svg" height="361pt" viewBox="0.00 0.00 265.41 361.00" width="265pt">
+<ns0:g class="graph" id="graph0" transform="scale(1 1) rotate(0) translate(4 357)">
+<ns0:polygon fill="white" points="-4,4 -4,-357 261.41,-357 261.41,4 -4,4" stroke="transparent" />
+
+<ns0:g class="node" id="nodea0">
+<ns0:title>-1</ns0:title>
+<ns0:ellipse cx="130.41" cy="-326" fill="none" rx="27" ry="27" stroke="red" />
+<ns0:text fill="red" font-family="Times New Roman,serif" font-size="14.00" text-anchor="middle" x="130.41" y="-322.3">-1</ns0:text>
+</ns0:g>
+
+<ns0:g class="node" id="nodea1">
+<ns0:title>0</ns0:title>
+<ns0:ellipse cx="115.41" cy="-126" fill="none" rx="27" ry="27" stroke="black" />
+<ns0:text font-family="Times New Roman,serif" font-size="14.00" text-anchor="middle" x="115.41" y="-122.3">0</ns0:text>
+</ns0:g>
+
+<ns0:g class="edge" id="edgea0-a1">
+<ns0:title>-1-&gt;0</ns0:title>
+<ns0:path d="M104.74,-317.05C75.63,-306.5 29.6,-284.78 9.41,-248 0,-230.86 0.53,-221.42 9.41,-204 24.34,-174.71 56.2,-153.95 81.11,-141.42" fill="none" stroke="black" />
+<ns0:polygon fill="black" points="82.77,-144.51 90.27,-137.02 79.74,-138.2 82.77,-144.51" stroke="black" />
+<ns0:text font-family="Times New Roman,serif" font-size="14.00" text-anchor="middle" x="21.91" y="-222.3"> 0:1 </ns0:text>
+</ns0:g>
+
+<ns0:g class="node" id="nodea2">
+<ns0:title>a2</ns0:title>
+<ns0:ellipse cx="65.41" cy="-226" fill="none" rx="22" ry="22" stroke="black" />
+<ns0:ellipse cx="65.41" cy="-226" fill="none" rx="26" ry="26" stroke="black" />
+<ns0:text font-family="Times New Roman,serif" font-size="14.00" text-anchor="middle" x="65.41" y="-222.3">a2</ns0:text>
+</ns0:g>
+
+<ns0:g class="edge" id="edgea0-a2">
+<ns0:title>-1-&gt;a2</ns0:title>
+<ns0:path d="M115.66,-302.76C105.96,-288.13 93.2,-268.9 82.97,-253.48" fill="none" stroke="black" />
+<ns0:polygon fill="black" points="85.72,-251.3 77.28,-244.9 79.89,-255.17 85.72,-251.3" stroke="black" />
+<ns0:text font-family="Times New Roman,serif" font-size="14.00" text-anchor="middle" x="111.91" y="-269.8"> 1:1 </ns0:text>
+</ns0:g>
+
+<ns0:g class="edge" id="edgea1-a0">
+<ns0:title>0-&gt;-1</ns0:title>
+<ns0:path d="M125.14,-151.52C130.53,-166.43 136.67,-186 139.41,-204 143.75,-232.48 140.88,-265.06 137.27,-289.24" fill="none" stroke="black" />
+<ns0:polygon fill="black" points="133.77,-288.95 135.64,-299.38 140.68,-290.06 133.77,-288.95" stroke="black" />
+<ns0:text font-family="Times New Roman,serif" font-size="14.00" text-anchor="middle" x="153.91" y="-222.3"> 1:0 </ns0:text>
+</ns0:g>
+
+<ns0:g class="node" id="nodea3">
+<ns0:title>a3</ns0:title>
+<ns0:ellipse cx="192.41" cy="-26" fill="none" rx="22" ry="22" stroke="black" />
+<ns0:ellipse cx="192.41" cy="-26" fill="none" rx="26" ry="26" stroke="black" />
+<ns0:text font-family="Times New Roman,serif" font-size="14.00" text-anchor="middle" x="192.41" y="-22.3">a3</ns0:text>
+</ns0:g>
+
+<ns0:g class="edge" id="edgea1-a3">
+<ns0:title>0-&gt;a3</ns0:title>
+<ns0:path d="M131.74,-104.22C143.77,-88.91 160.18,-68.02 172.9,-51.83" fill="none" stroke="black" />
+<ns0:polygon fill="black" points="175.74,-53.87 179.17,-43.85 170.24,-49.55 175.74,-53.87" stroke="black" />
+<ns0:text font-family="Times New Roman,serif" font-size="14.00" text-anchor="middle" x="172.91" y="-69.8"> 0:0 </ns0:text>
+</ns0:g>
+
+<ns0:g class="edge" id="edgea2-a1">
+<ns0:title>a2-&gt;0</ns0:title>
+<ns0:path d="M75.05,-206.1C81.77,-192.93 90.91,-175.02 98.79,-159.57" fill="none" stroke="black" />
+<ns0:polygon fill="black" points="102.08,-160.83 103.51,-150.33 95.85,-157.65 102.08,-160.83" stroke="black" />
+<ns0:text font-family="Times New Roman,serif" font-size="14.00" text-anchor="middle" x="103.91" y="-174.8"> 0:1 </ns0:text>
+</ns0:g>
+
+<ns0:g class="edge" id="edgea2-a2">
+<ns0:title>a2-&gt;a2</ns0:title>
+<ns0:path d="M85.99,-234.37C96.25,-235.53 105.41,-232.74 105.41,-226 105.41,-221.68 101.65,-218.99 96.25,-217.91" fill="none" stroke="black" />
+<ns0:polygon fill="black" points="96.08,-214.4 85.99,-217.63 95.89,-221.4 96.08,-214.4" stroke="black" />
+<ns0:text font-family="Times New Roman,serif" font-size="14.00" text-anchor="middle" x="117.91" y="-222.3"> 1:1 </ns0:text>
+</ns0:g>
+
+<ns0:g class="edge" id="edgea3-a0">
+<ns0:title>a3-&gt;-1</ns0:title>
+<ns0:path d="M193.03,-48.26C193.59,-88.28 192.02,-177.19 170.41,-248 165.55,-263.92 157.44,-280.44 149.78,-294.08" fill="none" stroke="black" />
+<ns0:polygon fill="black" points="146.58,-292.61 144.6,-303.02 152.64,-296.12 146.58,-292.61" stroke="black" />
+<ns0:text font-family="Times New Roman,serif" font-size="14.00" text-anchor="middle" x="197.91" y="-174.8"> 1:0 </ns0:text>
+</ns0:g>
+
+<ns0:g class="edge" id="edgea3-a3">
+<ns0:title>a3-&gt;a3</ns0:title>
+<ns0:path d="M212.99,-34.37C223.26,-35.53 232.41,-32.74 232.41,-26 232.41,-21.68 228.65,-18.99 223.26,-17.91" fill="none" stroke="black" />
+<ns0:polygon fill="black" points="223.08,-14.4 212.99,-17.63 222.89,-21.4 223.08,-14.4" stroke="black" />
+<ns0:text font-family="Times New Roman,serif" font-size="14.00" text-anchor="middle" x="244.91" y="-22.3"> 0:0 </ns0:text>
+</ns0:g>
+</ns0:g>
+</ns0:svg>

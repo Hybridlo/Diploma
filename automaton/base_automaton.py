@@ -17,7 +17,7 @@ class AbstractState(typing.Generic[_D]):
         self.is_accepting: typing.Optional[bool] = None
         self.transitions: typing.Dict[str, typing.Tuple[typing_extensions.Self, typing.Optional[str]]] = {}
         self.parent_automaton: _D = parent_automaton     #idk if i need it, but i do need a counter for them
-        self.my_number = parent_automaton.state_counter
+        self.my_number = "a" + str(parent_automaton.state_counter)
         parent_automaton.state_counter += 1
 
     def set_transition(self, transition_input: str, to_state: typing_extensions.Self, transition_output: typing.Optional[str] = None):

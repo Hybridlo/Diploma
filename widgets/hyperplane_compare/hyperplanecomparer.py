@@ -6,53 +6,53 @@ from PyQt6.QtWidgets import (
     QWidget, QHBoxLayout, QSizePolicy, QPushButton, QLabel, QVBoxLayout, QScrollArea, QMessageBox
 )
 from PyQt6 import QtCore
+from automata_graph.automata_renderer import HyperplaneComparator
+from widgets.hyperplane_compare.progressholder import HyperplaneComparingProgress
+from widgets.hyperplane_compare.resultholder import ThreeBasketResultHolder
 
-from widgets.vectordefiner import VectorDefinerAutoextend, VectorDefinerFixed
-from widgets.vector_compare.progressholder import VectorComparingProgress
+from widgets.vectordefiner import VectorDefinerFixed
+from widgets.formuladefiner import FormulaDefiner
 from widgets.vectordefined import VectorDefined
-from widgets.vector_compare.resultholder import FourBasketResultHolder
-
-from automata_graph.automata_renderer import VectorComparatorByCoordinate
 
 if typing.TYPE_CHECKING:
     from main import Window
 
-class VectorComparer(QWidget):
+class HyperplaneComparer(QWidget):
     def __init__(self, main_window: Window, parent: typing.Optional['QWidget'] = ...) -> None:
         super().__init__(parent)
         self.setup_ui()
         self.main_window = main_window
         self.defined_vectors: typing.List[VectorDefined] = []
-        self.result_widget: typing.Optional[FourBasketResultHolder] = None
-        self.progress_widget: typing.Optional[VectorComparingProgress] = None
+        self.result_widget: typing.Optional[ThreeBasketResultHolder] = None
+        self.progress_widget: typing.Optional[HyperplaneComparingProgress] = None
 
     def lock_button_react(self):
-        first_vector_line_edit = self.pivot_vector.line_edits[0]
+        first_vector_line_edit = self.formula.line_edits[0]
 
         if first_vector_line_edit.text():
-            self.lock_pivot_button.setDisabled(False)
+            self.lock_formula_button.setDisabled(False)
         else:
-            self.lock_pivot_button.setDisabled(True)
+            self.lock_formula_button.setDisabled(True)
 
-    def lock_pivot(self):
-        if not self.pivot_vector.check_all_filled():
+    def lock_formula(self):
+        if not self.formula.check_all_filled():
             _translate = QtCore.QCoreApplication.translate
             QMessageBox.warning(self, _translate("MainWindow", "Locking failed"), _translate("MainWindow", "Make sure all vector fields have numbers"))
             return
 
-        last_line_edit = self.pivot_vector.line_edits[-1]
+        last_line_edit = self.formula.line_edits[-1]
         _translate = QtCore.QCoreApplication.translate
-        self.vector_definer.resize_vector(self.pivot_vector.vector_size)
+        self.vector_definer.resize_vector(self.formula.formula_size)
 
         if last_line_edit.isEnabled():
-            self.lock_pivot_button.setText(_translate("MainWindow", "Unlock"))
-            self.pivot_vector.set_disable_input(True)
+            self.lock_formula_button.setText(_translate("MainWindow", "Unlock"))
+            self.formula.set_disable_input(True)
             self.vector_definer.set_disable_input(False)
             self.add_vector_button.setDisabled(False)
             self.vector_definer.fill_default()
         else:
-            self.lock_pivot_button.setText(_translate("MainWindow", "Lock"))
-            self.pivot_vector.set_disable_input(False)
+            self.lock_formula_button.setText(_translate("MainWindow", "Lock"))
+            self.formula.set_disable_input(False)
             self.vector_definer.set_disable_input(True)
             self.add_vector_button.setDisabled(True)
 
@@ -75,15 +75,12 @@ class VectorComparer(QWidget):
     def run_automata(self):
         self.run_button.setDisabled(True)
         self.add_vector_button.setDisabled(True)
-        self.result_widget = FourBasketResultHolder(self.main_window.result_widget_holder)
-        self.main_window.result_layout_holder.addWidget(self.result_widget)
-        self.progress_widget = VectorComparingProgress(self.main_window.solving_progress_holder)
+        self.progress_widget = HyperplaneComparingProgress(self.main_window.solving_progress_holder)
         self.main_window.solving_progress_layout.addWidget(self.progress_widget)
-        self.solver = VectorComparatorByCoordinate(self, self.progress_widget, self.result_widget)
+        self.result_widget = ThreeBasketResultHolder(self.main_window.result_widget_holder)
+        self.main_window.result_layout_holder.addWidget(self.result_widget)
+        self.solver = HyperplaneComparator(self, self.progress_widget, self.result_widget)
         self.solver.solution_step()
-
-
-
     
 
     def setup_ui(self):
@@ -138,14 +135,14 @@ class VectorComparer(QWidget):
         self.scrollAreaWidgetContents_6.setObjectName("scrollAreaWidgetContents_6")
         self.horizontalLayout_8 = QHBoxLayout(self.scrollAreaWidgetContents_6)
         self.horizontalLayout_8.setObjectName("horizontalLayout_8")
-        self.pivot_vector = VectorDefinerAutoextend(self.scrollAreaWidgetContents_6)
+        self.formula = FormulaDefiner(self.scrollAreaWidgetContents_6)
         sizePolicy = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.pivot_vector.sizePolicy().hasHeightForWidth())
-        self.pivot_vector.setSizePolicy(sizePolicy)
-        self.pivot_vector.setObjectName("pivot_vector")
-        self.horizontalLayout_8.addWidget(self.pivot_vector, 0, QtCore.Qt.AlignmentFlag.AlignLeft)
+        sizePolicy.setHeightForWidth(self.formula.sizePolicy().hasHeightForWidth())
+        self.formula.setSizePolicy(sizePolicy)
+        self.formula.setObjectName("pivot_vector")
+        self.horizontalLayout_8.addWidget(self.formula, 0, QtCore.Qt.AlignmentFlag.AlignLeft)
         self.scrollArea.setWidget(self.scrollAreaWidgetContents_6)
         self.horizontalLayout_5.addWidget(self.scrollArea)
         self.verticalLayout_6.addWidget(self.widget_11)
@@ -170,14 +167,14 @@ class VectorComparer(QWidget):
         self.label.setObjectName("label")
         self.horizontalLayout_6.addWidget(self.label)
         self.horizontalLayout_4.addWidget(self.widget_13)
-        self.lock_pivot_button = QPushButton(self.widget_12)
+        self.lock_formula_button = QPushButton(self.widget_12)
         sizePolicy = QSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Fixed)
         sizePolicy.setHorizontalStretch(1)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.lock_pivot_button.sizePolicy().hasHeightForWidth())
-        self.lock_pivot_button.setSizePolicy(sizePolicy)
-        self.lock_pivot_button.setObjectName("lock_pivot_button")
-        self.horizontalLayout_4.addWidget(self.lock_pivot_button)
+        sizePolicy.setHeightForWidth(self.lock_formula_button.sizePolicy().hasHeightForWidth())
+        self.lock_formula_button.setSizePolicy(sizePolicy)
+        self.lock_formula_button.setObjectName("lock_pivot_button")
+        self.horizontalLayout_4.addWidget(self.lock_formula_button)
         self.verticalLayout_6.addWidget(self.widget_12)
         self.verticalLayout_8.addWidget(self.widget_6)
         self.widget_7 = QWidget(self.widget_10)
@@ -324,7 +321,7 @@ class VectorComparer(QWidget):
         self.verticalLayout_8.addWidget(self.widget_3)
         self.verticalLayout_10.addWidget(self.widget_10)
 
-        self.lock_pivot_button.clicked.connect(self.lock_pivot)
+        self.lock_formula_button.clicked.connect(self.lock_formula)
         self.add_vector_button.clicked.connect(self.add_vector)
         self.run_button.clicked.connect(self.run_automata)
         
@@ -333,7 +330,7 @@ class VectorComparer(QWidget):
     def retranslate_ui(self):
         _translate = QtCore.QCoreApplication.translate
         self.label.setText(_translate("MainWindow", "Pivot vector"))
-        self.lock_pivot_button.setText(_translate("MainWindow", "Lock"))
+        self.lock_formula_button.setText(_translate("MainWindow", "Lock"))
         self.label_2.setText(_translate("MainWindow", "Add vector to set"))
         self.add_vector_button.setText(_translate("MainWindow", "Add"))
         self.label_3.setText(_translate("MainWindow", "Added vectors"))

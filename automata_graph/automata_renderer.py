@@ -6,35 +6,17 @@ from PyQt6.QtCore import (QByteArray, QTimer, QSize)
 
 from automaton.fa_automaton import FAAutomaton, FAState
 from automata_graph.graph_render import RenderedAutomaton
-from utils.const import ComparisonValues
-from utils.transformers import transform_number
-from widgets.vector_compare.resultholders import FourBasketResultHolder
+from automaton.presburger import generate_equals_solver_automaton
+from utils.const import ComparisonValues, HyperplaneComparisonValues
+from utils.transformers import transform_number_big_endian, transform_numbers_little_endian
+from widgets.hyperplane_compare.resultholder import ThreeBasketResultHolder
+from widgets.vector_compare.resultholder import FourBasketResultHolder
 
 if typing.TYPE_CHECKING:
     from widgets.vector_compare.vectorcomparer import VectorComparer
-    from PyQt6.QtWidgets import QWidget
-    from PyQt6.QtSvgWidgets import QSvgWidget
-    from widgets.vector_compare.progressholders import VectorComparingProgress
-
-def render_svg_step(r_automaton: RenderedAutomaton, target_widget: QSvgWidget, input: str, transition: bool = False):
-    if not transition:
-        xml_data = r_automaton.render_step()
-
-    else:
-        if not input:
-            return
-
-        xml_data = r_automaton.render_step(input[0])
-        if "|" in input:
-            r_automaton.automaton.change_state(input[:input.find('|')])
-            input = input[input.find('|') + 1:]
-        else:
-            r_automaton.automaton.change_state(input)
-            input = ""
-
-    target_widget.load(QByteArray(xml_data))    # type: ignore
-
-    QTimer.singleShot(2000, partial(render_svg_step, r_automaton, target_widget, input, not transition))
+    from widgets.vector_compare.progressholder import VectorComparingProgress
+    from widgets.hyperplane_compare.hyperplanecomparer import HyperplaneComparer
+    from widgets.hyperplane_compare.progressholder import HyperplaneComparingProgress
 
 class VectorComparatorByCoordinate:
     def __init__(self, comparer: VectorComparer, progress_holder: VectorComparingProgress, result_holder: FourBasketResultHolder):
@@ -120,8 +102,8 @@ class VectorComparatorByCoordinate:
         pivot_coord = self.pivot_vector.pop(0)
         compare_coord = self.current_comparing_vector.pop(0)
 
-        pivot_sign, pivot_coord_binary = transform_number(pivot_coord)
-        compare_sign, compare_coord_binary = transform_number(compare_coord)
+        pivot_sign, pivot_coord_binary = transform_number_big_endian(pivot_coord)
+        compare_sign, compare_coord_binary = transform_number_big_endian(compare_coord)
 
         pivot_coord_binary = pivot_sign + pivot_coord_binary.rjust(len(compare_coord_binary), "0")
         compare_coord_binary = compare_sign + compare_coord_binary.rjust(len(pivot_coord_binary)-1, "0")
@@ -191,6 +173,103 @@ class VectorComparatorByCoordinate:
 
         elif not self.current_comparing_coordinate:
             self.pop_vector_coordinates()
+
+        else:
+            self.do_transition()
+
+        QTimer.singleShot(500, self.solution_step)
+
+class HyperplaneComparator:
+    def __init__(self, comparer: HyperplaneComparer, progress_holder: HyperplaneComparingProgress, result_holder: ThreeBasketResultHolder):
+        self.transition = False
+        self.comparer = comparer
+        self.progress_holder = progress_holder
+        self.result_holder = result_holder
+        self.formula: typing.List[int] = comparer.formula.formula_data
+        self.current_comparing_vector: typing.Optional[typing.List[int]] = None
+        self.current_comparison_state: str = ""
+        self.current_comparing_vector_input: typing.Optional[typing.List[str]] = None
+        self.solving_automaton = self._build_solving_automata()
+
+    def _build_solving_automata(self) -> RenderedAutomaton[FAState]:
+        return generate_equals_solver_automaton(self.formula)
+
+    def finalize_vector_compare(self):
+        if not self.current_comparing_vector:
+            raise Exception("finalizing impossible")
+
+        elif self.current_comparison_state == HyperplaneComparisonValues.accepted:
+            self.result_holder.add_result(self.current_comparing_vector, 3)
+
+        elif self.current_comparison_state == HyperplaneComparisonValues.rejected:
+            self.result_holder.add_result(self.current_comparing_vector, 1)
+    
+    def get_new_comparing_vector(self):
+        if self.current_comparing_vector_input == []:
+            self.finalize_vector_compare()
+        
+        getting_vector = self.comparer.defined_vectors[0]
+
+        self.formula = self.comparer.formula.formula_data
+        self.progress_holder.current_formula.setText(f"({', '.join(str(a) for a in self.formula)})")
+
+        self.current_comparing_vector = getting_vector.vector_data
+        self.progress_holder.current_comparing_vector.setText(f"({', '.join(str(a) for a in self.current_comparing_vector)})")
+
+        self.current_comparison_state = ""
+        self.progress_holder.current_comparison_results.setText(f"{str(self.current_comparison_state)}")
+
+        self.comparer.remove_vector(getting_vector)
+
+        self.current_comparing_vector_input = [":".join(a) for a in zip(*transform_numbers_little_endian(self.current_comparing_vector))] + [""]
+
+    def finalize_coord_compare(self):
+        self.transition = False
+
+        if not self.solving_automaton.automaton.current_state:
+            self.current_comparison_state = HyperplaneComparisonValues.rejected
+
+        else:
+            if not self.solving_automaton.automaton.current_state.is_accepting:
+                self.current_comparison_state = HyperplaneComparisonValues.rejected
+
+        if not self.current_comparison_state:
+            self.current_comparison_state = HyperplaneComparisonValues.accepted
+
+        self.progress_holder.current_comparison_results.setText(f"{str(self.current_comparison_state)}")
+        self.solving_automaton.automaton.reset_state()
+    
+    def do_transition(self):
+        if not self.transition:
+            xml_data = self.solving_automaton.render_step()
+
+        else:
+            if not self.current_comparing_vector_input:
+                raise Exception("List was unexpectedly empty")
+
+            inp = self.current_comparing_vector_input.pop(0)
+
+            if inp == "":
+                self.finalize_coord_compare()
+                return
+
+            xml_data = self.solving_automaton.render_step(inp)
+            self.solving_automaton.automaton.change_state(inp)
+
+            self.progress_holder.current_binary_comparing.setText(inp)
+
+        self.comparer.main_window.svg_widget.load(QByteArray(xml_data))    # type: ignore
+        self.comparer.main_window.svg_widget.setFixedSize(QSize(*self.solving_automaton.get_size()))
+
+        self.transition = not self.transition
+    
+    def solution_step(self):
+        if not self.comparer.defined_vectors and not self.current_comparing_vector_input:
+            self.finalize_vector_compare()
+            return
+
+        elif not self.current_comparing_vector_input:
+            self.get_new_comparing_vector()
 
         else:
             self.do_transition()

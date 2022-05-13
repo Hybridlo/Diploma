@@ -21,10 +21,11 @@ class RenderedAutomaton(typing.Generic[_T]):
                 return
 
             visited_nodes.append(node.my_number)
+            node_name = str(node.result) if getattr(node, "result", None) else node.my_number    # type: ignore
             if node.is_accepting:
-                graph.add_node(node.my_number, id=f"node{node.my_number}", shape="doublecircle", width="0.5", fixedsize="true")
+                graph.add_node(node_name, id=f"node{node.my_number}", shape="doublecircle", width="0.5", fixedsize="true")
             else:
-                graph.add_node(node.my_number, id=f"node{node.my_number}", shape="circle", width="0.75", fixedsize="true")
+                graph.add_node(node_name, id=f"node{node.my_number}", shape="circle", width="0.75", fixedsize="true")
 
             reorganized_transitions: typing.Dict[AbstractState, typing.Dict[str, typing.Optional[str]]] = {}
 
@@ -38,9 +39,10 @@ class RenderedAutomaton(typing.Generic[_T]):
                     reorganized_transitions[next_node] = {key: value[1]}
 
             for next_node in reorganized_transitions:
+                next_node_name = str(next_node.result) if getattr(next_node, "result", None) else next_node.my_number    # type: ignore
                 # combines input and output strings with "->" and combines all those strings with "\n"
                 edge_label = "\\n".join(" " + ("->".join(str(b) for b in a) if a[1] else a[0]) + " " for a in reorganized_transitions[next_node].items())
-                graph.add_edge(node.my_number, next_node.my_number, label=edge_label, id=f"edge{node.my_number}-{next_node.my_number}")
+                graph.add_edge(node_name, next_node_name, label=edge_label, id=f"edge{node.my_number}-{next_node.my_number}")
 
         recursive_visit(automaton.initial_state)
 
