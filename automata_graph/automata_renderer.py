@@ -134,7 +134,7 @@ class VectorComparatorByCoordinate:
         self.solving_automaton.automaton.reset_state()
     
     def do_transition(self):
-        if not self.transition:
+        if not self.transition and self.comparer.main_window.animation_time:
             xml_data = self.solving_automaton.render_step()
 
         else:
@@ -151,15 +151,19 @@ class VectorComparatorByCoordinate:
                 return
 
             inp = compare_bit + ":" + pivot_bit
-            xml_data = self.solving_automaton.render_step(inp)
+
+            if self.comparer.main_window.animation_time:
+                xml_data = self.solving_automaton.render_step(inp)
+
             self.solving_automaton.automaton.change_state(inp)
 
             self.progress_holder.current_pivot_vector_coordinate.setText(self.current_pivot_coordinate)
             self.progress_holder.current_comparing_vector_coordinate.setText(self.current_comparing_coordinate)
             self.progress_holder.current_binary_comparing.setText(inp)
 
-        self.comparer.main_window.svg_widget.load(QByteArray(xml_data))    # type: ignore
-        self.comparer.main_window.svg_widget.setFixedSize(QSize(*self.solving_automaton.get_size()))
+        if self.comparer.main_window.animation_time:
+            self.comparer.main_window.svg_widget.load(QByteArray(xml_data))    # type: ignore
+            self.comparer.main_window.svg_widget.setFixedSize(QSize(*self.solving_automaton.get_size()))
 
         self.transition = not self.transition
     
@@ -177,7 +181,10 @@ class VectorComparatorByCoordinate:
         else:
             self.do_transition()
 
-        QTimer.singleShot(500, self.solution_step)
+        if not self.comparer.main_window.animation_time:
+            QTimer.singleShot(0, self.solution_step)
+        else:
+            QTimer.singleShot(self.comparer.main_window.animation_time, self.solution_step)
 
 class HyperplaneComparator:
     def __init__(self, comparer: HyperplaneComparer, progress_holder: HyperplaneComparingProgress, result_holder: ThreeBasketResultHolder):
@@ -240,7 +247,7 @@ class HyperplaneComparator:
         self.solving_automaton.automaton.reset_state()
     
     def do_transition(self):
-        if not self.transition:
+        if not self.transition and self.comparer.main_window.animation_time:
             xml_data = self.solving_automaton.render_step()
 
         else:
@@ -253,13 +260,16 @@ class HyperplaneComparator:
                 self.finalize_coord_compare()
                 return
 
-            xml_data = self.solving_automaton.render_step(inp)
+            if self.comparer.main_window.animation_time:
+                xml_data = self.solving_automaton.render_step(inp)
+
             self.solving_automaton.automaton.change_state(inp)
 
             self.progress_holder.current_binary_comparing.setText(inp)
 
-        self.comparer.main_window.svg_widget.load(QByteArray(xml_data))    # type: ignore
-        self.comparer.main_window.svg_widget.setFixedSize(QSize(*self.solving_automaton.get_size()))
+        if self.comparer.main_window.animation_time:
+            self.comparer.main_window.svg_widget.load(QByteArray(xml_data))    # type: ignore
+            self.comparer.main_window.svg_widget.setFixedSize(QSize(*self.solving_automaton.get_size()))
 
         self.transition = not self.transition
     
@@ -274,4 +284,7 @@ class HyperplaneComparator:
         else:
             self.do_transition()
 
-        QTimer.singleShot(500, self.solution_step)
+        if not self.comparer.main_window.animation_time:
+            QTimer.singleShot(0, self.solution_step)
+        else:
+            QTimer.singleShot(self.comparer.main_window.animation_time, self.solution_step)
