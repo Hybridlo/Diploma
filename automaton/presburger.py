@@ -60,14 +60,13 @@ def generate_equals_solver_automaton(formula: typing.List[int]) -> RenderedAutom
                     accepting_states.append((ptr_state, a))
 
                 else:
-                    existing_state = next((a for a in processed if a.result and a.result == str(state_minus // 2)), None)
+                    existing_state = next((a for a in processed + unprocessed if a.result and a.result == str(state_minus // 2)), None)
 
                     if not existing_state:
                         existing_state = FAState(automaton, False, str(state_minus // 2))
                         unprocessed.append(existing_state)
 
                     ptr_state.set_transition(a, existing_state)
-
 
     for state, transition in accepting_states:
         accepting_state = FAState(automaton, True, "")

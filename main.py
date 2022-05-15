@@ -3,8 +3,8 @@ import typing
 from PyQt6.QtWidgets import (
     QApplication, QMainWindow, QAbstractButton
 )
-from automata_graph.graph_render import RenderedAutomaton
-from automaton.fa_automaton import FAAutomaton, FAState
+from PyQt6.QtGui import QWheelEvent
+from PyQt6.QtCore import QSize
 
 from main_ui import Ui_MainWindow
 from widgets.hyperplane_compare.hyperplanecomparer import HyperplaneComparer
@@ -26,6 +26,26 @@ class Window(QMainWindow, Ui_MainWindow):
         self.hyperplane_comparer_layout.addWidget(self.hyperplane_comparer)
 
         self.button_group.buttonClicked.connect(self.change_animation_delay)
+
+        def scale_svg(a0: QWheelEvent):
+            size = self.svg_widget.size()
+            x, y = size.width(), size.height()
+
+            size2 = self.scrollArea_4.size()
+            view_x, view_y = size2.width(), size2.height()
+
+            if x < view_x and y < view_y and a0.angleDelta().y() < 0:
+                return
+
+            if a0.angleDelta().y() > 0:
+                x, y = round(x * 1.25), round(y * 1.25)
+
+            else:
+                x, y = round(x * 0.8),  round(y * 0.8)
+
+            self.svg_widget.setFixedSize(QSize(x, y))
+
+        self.svg_widget.wheelEvent = scale_svg
 
     def execute_test(self):
         pass

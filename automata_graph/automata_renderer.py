@@ -166,7 +166,6 @@ class VectorComparatorByCoordinate:
 
         if self.comparer.main_window.animation_time:
             self.comparer.main_window.svg_widget.load(QByteArray(xml_data))    # type: ignore
-            self.comparer.main_window.svg_widget.setFixedSize(QSize(*self.solving_automaton.get_size()))
 
         self.transition = not self.transition
     
@@ -276,7 +275,6 @@ class HyperplaneComparator:
 
         if self.comparer.main_window.animation_time:
             self.comparer.main_window.svg_widget.load(QByteArray(xml_data))    # type: ignore
-            self.comparer.main_window.svg_widget.setFixedSize(QSize(*self.solving_automaton.get_size()))
 
         self.transition = not self.transition
     

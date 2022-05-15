@@ -100,6 +100,7 @@ class VectorComparer(QWidget):
             self.main_window.solving_progress_layout.addWidget(self.progress_widget)
             self.solver = VectorComparatorByCoordinate(self, self.progress_widget, self.result_widget)
             self.solver.solution_step()
+            self.main_window.svg_widget.setFixedSize(QtCore.QSize(*self.solver.solving_automaton.get_size()))
 
         else:
             self.stop_automata()

@@ -100,6 +100,7 @@ class HyperplaneComparer(QWidget):
             self.main_window.result_layout_holder.addWidget(self.result_widget)
             self.solver = HyperplaneComparator(self, self.progress_widget, self.result_widget)
             self.solver.solution_step()
+            self.main_window.svg_widget.setFixedSize(QtCore.QSize(*self.solver.solving_automaton.get_size()))
 
         else:
             self.stop_automata()

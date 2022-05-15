@@ -12,6 +12,7 @@ _T = typing.TypeVar("_T", bound="AbstractState")
 class RenderedAutomaton(typing.Generic[_T]):
     def __init__(self, automaton: AbstractAutomaton[_T]) -> None:
         graph = nx.DiGraph()
+        graph.graph['graph'] = {'rankdir': "LR"}
         self.automaton = automaton
 
         visited_nodes = []
@@ -42,7 +43,7 @@ class RenderedAutomaton(typing.Generic[_T]):
                 next_node_name = str(next_node.result) if getattr(next_node, "result", None) else next_node.my_number    # type: ignore
                 # combines input and output strings with "->" and combines all those strings with "\n"
                 edge_label = "\\n".join(" " + ("->".join(str(b) for b in a) if a[1] else a[0]) + " " for a in reorganized_transitions[next_node].items())
-                graph.add_edge(node_name, next_node_name, label=edge_label, id=f"edge{node.my_number}-{next_node.my_number}")
+                graph.add_edge(node_name, next_node_name, label=edge_label, id=f"edge{node.my_number}-{next_node.my_number}", len=3)
 
         recursive_visit(automaton.initial_state)
 
