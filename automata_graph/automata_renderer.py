@@ -7,7 +7,7 @@ from PyQt6.QtCore import (QByteArray, QTimer, QSize)
 from automaton.fa_automaton import FAAutomaton, FAState
 from automata_graph.graph_render import RenderedAutomaton
 from automaton.presburger import generate_equals_solver_automaton
-from utils.const import ComparisonValues, HyperplaneComparisonValues
+from utils.const import ComparisonValues
 from utils.transformers import transform_number_big_endian, transform_numbers_little_endian
 from widgets.hyperplane_compare.resultholder import ThreeBasketResultHolder
 from widgets.vector_compare.resultholder import FourBasketResultHolder
@@ -211,11 +211,14 @@ class HyperplaneComparator:
         if not self.current_comparing_vector:
             raise Exception("finalizing impossible")
 
-        elif self.current_comparison_state == HyperplaneComparisonValues.accepted:
+        elif self.current_comparison_state == ComparisonValues.less:
+            self.result_holder.add_result(self.current_comparing_vector, 1)
+
+        elif self.current_comparison_state == ComparisonValues.equal:
             self.result_holder.add_result(self.current_comparing_vector, 3)
 
-        elif self.current_comparison_state == HyperplaneComparisonValues.rejected:
-            self.result_holder.add_result(self.current_comparing_vector, 1)
+        elif self.current_comparison_state == ComparisonValues.greater:
+            self.result_holder.add_result(self.current_comparing_vector, 2)
     
     def get_new_comparing_vector(self):
         if self.current_comparing_vector_input == []:
@@ -239,15 +242,14 @@ class HyperplaneComparator:
     def finalize_coord_compare(self):
         self.transition = False
 
-        if not self.solving_automaton.automaton.current_state:
-            self.current_comparison_state = HyperplaneComparisonValues.rejected
+        if not self.solving_automaton.automaton.current_state or not self.solving_automaton.automaton.current_state.is_accepting:
+            self.current_comparison_state = ComparisonValues.less
+
+        elif self.solving_automaton.automaton.current_state.result:
+            self.current_comparison_state = self.solving_automaton.automaton.current_state.result
 
         else:
-            if not self.solving_automaton.automaton.current_state.is_accepting:
-                self.current_comparison_state = HyperplaneComparisonValues.rejected
-
-        if not self.current_comparison_state:
-            self.current_comparison_state = HyperplaneComparisonValues.accepted
+            raise Exception("State is accepting but doesn't have a result")
 
         self.progress_holder.current_comparison_results.setText(f"{str(self.current_comparison_state)}")
         self.solving_automaton.automaton.reset_state()
@@ -266,6 +268,9 @@ class HyperplaneComparator:
                 self.finalize_coord_compare()
                 return
 
+            if self.comparer.main_window.animation_time:
+                xml_data = self.solving_automaton.render_step(inp)
+
             self.solving_automaton.automaton.change_state(inp)
 
             if not self.solving_automaton.automaton.current_state:
@@ -273,12 +278,11 @@ class HyperplaneComparator:
                 self.finalize_coord_compare()
                 return
 
-            if self.comparer.main_window.animation_time:
-                xml_data = self.solving_automaton.render_step(inp)
-
             self.progress_holder.current_binary_comparing.setText(inp)
 
         if self.comparer.main_window.animation_time:
+            with open("test.svg", "wb") as outfile:
+                outfile.write(xml_data)    # type: ignore
             self.comparer.main_window.svg_widget.load(QByteArray(xml_data))    # type: ignore
 
 
