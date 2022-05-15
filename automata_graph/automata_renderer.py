@@ -31,6 +31,9 @@ class VectorComparatorByCoordinate:
         self.current_comparison_state: typing.List[str] = []
         self.current_pivot_coordinate: str = ""
         self.current_comparing_coordinate: str = ""
+        self.timer: QTimer = QTimer()
+        self.timer.setSingleShot(True)
+        self.timer.timeout.connect(self.solution_step)
 
     def _build_solving_automata(self) -> RenderedAutomaton[FAState]:
         automaton = FAAutomaton(FAState, False)
@@ -170,6 +173,7 @@ class VectorComparatorByCoordinate:
     def solution_step(self):
         if not self.comparer.defined_vectors and not self.current_comparing_vector and not self.current_comparing_coordinate:
             self.finalize_vector_compare()
+            self.comparer.stop_automata()
             return
 
         elif not self.current_comparing_vector and not self.current_comparing_coordinate:
@@ -182,9 +186,9 @@ class VectorComparatorByCoordinate:
             self.do_transition()
 
         if not self.comparer.main_window.animation_time:
-            QTimer.singleShot(0, self.solution_step)
+            self.timer.start(0)
         else:
-            QTimer.singleShot(self.comparer.main_window.animation_time, self.solution_step)
+            self.timer.start(self.comparer.main_window.animation_time)
 
 class HyperplaneComparator:
     def __init__(self, comparer: HyperplaneComparer, progress_holder: HyperplaneComparingProgress, result_holder: ThreeBasketResultHolder):
@@ -197,6 +201,9 @@ class HyperplaneComparator:
         self.current_comparison_state: str = ""
         self.current_comparing_vector_input: typing.Optional[typing.List[str]] = None
         self.solving_automaton = self._build_solving_automata()
+        self.timer: QTimer = QTimer()
+        self.timer.setSingleShot(True)
+        self.timer.timeout.connect(self.solution_step)
 
     def _build_solving_automata(self) -> RenderedAutomaton[FAState]:
         return generate_equals_solver_automaton(self.formula)
@@ -276,6 +283,7 @@ class HyperplaneComparator:
     def solution_step(self):
         if not self.comparer.defined_vectors and not self.current_comparing_vector_input:
             self.finalize_vector_compare()
+            self.comparer.stop_automata()
             return
 
         elif not self.current_comparing_vector_input:
@@ -285,6 +293,6 @@ class HyperplaneComparator:
             self.do_transition()
 
         if not self.comparer.main_window.animation_time:
-            QTimer.singleShot(0, self.solution_step)
+            self.timer.start(0)
         else:
-            QTimer.singleShot(self.comparer.main_window.animation_time, self.solution_step)
+            self.timer.start(self.comparer.main_window.animation_time)

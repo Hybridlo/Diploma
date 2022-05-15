@@ -45,6 +45,23 @@ class Window(QMainWindow, Ui_MainWindow):
 
         elif button is self.button_off:
             self.animation_time = None
+
+    def clear_result_and_progress(self):
+        while True:
+            child = self.solving_progress_layout.takeAt(0)
+
+            if child:
+                child.widget().deleteLater()
+            else:
+                break
+
+        while True:
+            child = self.result_layout_holder.takeAt(0)
+
+            if child:
+                child.widget().deleteLater()
+            else:
+                break
     
 
 if __name__ == "__main__":

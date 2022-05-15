@@ -48,6 +48,7 @@ class FormulaDefiner(QWidget):
     def new_line_edit_and_label(self) -> None:
         label = QLabel(self)
         label.setText("b")
+        label.setMinimumSize(QtCore.QSize(10, 0))
         label_text = ""
         i = len(self.labels)
 
@@ -72,6 +73,7 @@ class FormulaDefiner(QWidget):
         line_edit.setSizePolicy(sizePolicy)
         line_edit.setMaximumSize(QtCore.QSize(45, 16777215))
         line_edit.setValidator(QtGui.QRegularExpressionValidator(QtCore.QRegularExpression(r"(^$|0|-|^-?[1-9][0-9]*$)")))
+        line_edit.setAlignment(QtCore.Qt.AlignmentFlag.AlignRight)
         self.horizontal_layout.addWidget(line_edit)
 
     def set_disable_input(self, set_to_disabled: bool) -> None:
@@ -112,6 +114,7 @@ class FormulaDefiner(QWidget):
         line_edit.setSizePolicy(sizePolicy)
         line_edit.setMaximumSize(QtCore.QSize(45, 16777215))
         line_edit.setValidator(QtGui.QRegularExpressionValidator(QtCore.QRegularExpression(r"(^$|0|-|^-?[1-9][0-9]*$)")))
+        line_edit.setAlignment(QtCore.Qt.AlignmentFlag.AlignRight)
         self.horizontal_layout.addWidget(line_edit)
 
         self.new_line_edit_and_label()

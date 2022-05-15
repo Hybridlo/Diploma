@@ -25,23 +25,27 @@ class HyperplaneComparer(QWidget):
         self.defined_vectors: typing.List[VectorDefined] = []
         self.result_widget: typing.Optional[ThreeBasketResultHolder] = None
         self.progress_widget: typing.Optional[HyperplaneComparingProgress] = None
+        self.solver: typing.Optional[HyperplaneComparator] = None
+
+        self.lock_button_react_binding()
+
+    def lock_button_react_binding(self):
+        self.formula.line_edits[0].editingFinished.connect(self.lock_button_react)
 
     def lock_button_react(self):
-        first_vector_line_edit = self.formula.line_edits[0]
-
-        if first_vector_line_edit.text():
+        if self.formula.line_edits[0].text():
             self.lock_formula_button.setDisabled(False)
         else:
             self.lock_formula_button.setDisabled(True)
 
     def lock_formula(self):
+        _translate = QtCore.QCoreApplication.translate
+
         if not self.formula.check_all_filled():
-            _translate = QtCore.QCoreApplication.translate
             QMessageBox.warning(self, _translate("MainWindow", "Locking failed"), _translate("MainWindow", "Make sure all vector fields have numbers"))
             return
 
         last_line_edit = self.formula.line_edits[-1]
-        _translate = QtCore.QCoreApplication.translate
         self.vector_definer.resize_vector(self.formula.formula_size)
 
         if last_line_edit.isEnabled():
@@ -61,7 +65,13 @@ class HyperplaneComparer(QWidget):
         self.defined_vectors.remove(defined_vector)
         defined_vector.deleteLater()
 
+        if not self.defined_vectors and not self.solver:
+            self.run_button.setDisabled(True)
+
     def add_vector(self):
+        if not self.defined_vectors:
+            self.run_button.setDisabled(False)
+
         if not self.vector_definer.check_all_filled():
             _translate = QtCore.QCoreApplication.translate
             QMessageBox.warning(self, _translate("MainWindow", "Adding failed"), _translate("MainWindow", "Make sure all vector fields have numbers"))
@@ -72,15 +82,60 @@ class HyperplaneComparer(QWidget):
         new_defined_vector.pushButton.clicked.connect(partial(self.remove_vector, new_defined_vector))
         self.defined_vectors.append(new_defined_vector)
 
-    def run_automata(self):
+    def run_abort_automata(self):
+        _translate = QtCore.QCoreApplication.translate
+
+        if not self.solver:
+            self.run_button.setText(_translate("MainWindow", "Abort"))
+            self.pause_button.setText(_translate("MainWindow", "Pause"))
+            self.add_vector_button.setDisabled(True)
+            self.lock_formula_button.setDisabled(True)
+            self.pause_button.setDisabled(False)
+            self.main_window.tabWidget.tabBar().setDisabled(True)
+            
+            self.main_window.clear_result_and_progress()
+            self.progress_widget = HyperplaneComparingProgress(self.main_window.solving_progress_holder)
+            self.main_window.solving_progress_layout.addWidget(self.progress_widget)
+            self.result_widget = ThreeBasketResultHolder(self.main_window.result_widget_holder)
+            self.main_window.result_layout_holder.addWidget(self.result_widget)
+            self.solver = HyperplaneComparator(self, self.progress_widget, self.result_widget)
+            self.solver.solution_step()
+
+        else:
+            self.stop_automata()
+
+    def stop_automata(self):
+        _translate = QtCore.QCoreApplication.translate
+
+        self.main_window.svg_widget.load(QtCore.QByteArray(b""))     # type: ignore
+
+        if self.solver and self.solver.timer:
+            if self.solver.timer.isActive():
+                self.solver.timer.stop()
+
+        self.solver = None
+        self.main_window.tabWidget.tabBar().setDisabled(False)
+        self.pause_button.setDisabled(True)
+        self.lock_formula_button.setDisabled(False)
         self.run_button.setDisabled(True)
-        self.add_vector_button.setDisabled(True)
-        self.progress_widget = HyperplaneComparingProgress(self.main_window.solving_progress_holder)
-        self.main_window.solving_progress_layout.addWidget(self.progress_widget)
-        self.result_widget = ThreeBasketResultHolder(self.main_window.result_widget_holder)
-        self.main_window.result_layout_holder.addWidget(self.result_widget)
-        self.solver = HyperplaneComparator(self, self.progress_widget, self.result_widget)
-        self.solver.solution_step()
+        self.main_window.tabWidget.setDisabled(False)
+        self.run_button.setText(_translate("MainWindow", "Run"))
+
+        for vector in self.defined_vectors:
+            self.remove_vector(vector)
+
+        self.lock_formula()
+
+    def pause_resume_automata(self):
+        _translate = QtCore.QCoreApplication.translate
+
+        if self.solver and self.solver.timer:
+            if self.solver.timer.isActive():
+                self.pause_button.setText(_translate("MainWindow", "Resume"))
+                self.solver.timer.stop()
+            else:
+                self.pause_button.setText(_translate("MainWindow", "Pause"))
+                self.solver.timer.start()
     
 
     def setup_ui(self):
@@ -174,6 +229,7 @@ class HyperplaneComparer(QWidget):
         sizePolicy.setHeightForWidth(self.lock_formula_button.sizePolicy().hasHeightForWidth())
         self.lock_formula_button.setSizePolicy(sizePolicy)
         self.lock_formula_button.setObjectName("lock_pivot_button")
+        self.lock_formula_button.setDisabled(True)
         self.horizontalLayout_4.addWidget(self.lock_formula_button)
         self.verticalLayout_6.addWidget(self.widget_12)
         self.verticalLayout_8.addWidget(self.widget_6)
@@ -310,20 +366,31 @@ class HyperplaneComparer(QWidget):
         self.widget_5.setSizePolicy(sizePolicy)
         self.widget_5.setObjectName("widget_5")
         self.horizontalLayout.addWidget(self.widget_5)
+        self.pause_button = QPushButton(self.widget_3)
+        sizePolicy = QSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Fixed)
+        sizePolicy.setHorizontalStretch(1)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.pause_button.sizePolicy().hasHeightForWidth())
+        self.pause_button.setSizePolicy(sizePolicy)
+        self.pause_button.setObjectName("pause_button")
+        self.pause_button.setDisabled(True)
+        self.horizontalLayout.addWidget(self.pause_button)
         self.run_button = QPushButton(self.widget_3)
         sizePolicy = QSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Fixed)
-        sizePolicy.setHorizontalStretch(2)
+        sizePolicy.setHorizontalStretch(1)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.run_button.sizePolicy().hasHeightForWidth())
         self.run_button.setSizePolicy(sizePolicy)
         self.run_button.setObjectName("run_button")
+        self.run_button.setDisabled(True)
         self.horizontalLayout.addWidget(self.run_button)
         self.verticalLayout_8.addWidget(self.widget_3)
         self.verticalLayout_10.addWidget(self.widget_10)
 
         self.lock_formula_button.clicked.connect(self.lock_formula)
         self.add_vector_button.clicked.connect(self.add_vector)
-        self.run_button.clicked.connect(self.run_automata)
+        self.run_button.clicked.connect(self.run_abort_automata)
+        self.pause_button.clicked.connect(self.pause_resume_automata)
         
         self.retranslate_ui()
 
@@ -335,4 +402,5 @@ class HyperplaneComparer(QWidget):
         self.add_vector_button.setText(_translate("MainWindow", "Add"))
         self.label_3.setText(_translate("MainWindow", "Added vectors"))
         self.test_button.setText(_translate("MainWindow", "Test"))
-        self.run_button.setText(_translate("MainWindow", "Run!"))
+        self.pause_button.setText(_translate("MainWindow", "Pause"))
+        self.run_button.setText(_translate("MainWindow", "Run"))
