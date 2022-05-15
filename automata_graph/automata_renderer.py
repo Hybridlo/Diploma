@@ -266,15 +266,21 @@ class HyperplaneComparator:
                 self.finalize_coord_compare()
                 return
 
+            self.solving_automaton.automaton.change_state(inp)
+
+            if not self.solving_automaton.automaton.current_state:
+                self.current_comparing_vector_input = []
+                self.finalize_coord_compare()
+                return
+
             if self.comparer.main_window.animation_time:
                 xml_data = self.solving_automaton.render_step(inp)
-
-            self.solving_automaton.automaton.change_state(inp)
 
             self.progress_holder.current_binary_comparing.setText(inp)
 
         if self.comparer.main_window.animation_time:
             self.comparer.main_window.svg_widget.load(QByteArray(xml_data))    # type: ignore
+
 
         self.transition = not self.transition
     
