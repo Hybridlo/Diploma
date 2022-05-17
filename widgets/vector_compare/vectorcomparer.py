@@ -14,6 +14,8 @@ from widgets.vector_compare.resultholder import FourBasketResultHolder
 
 from automata_graph.automata_renderer import VectorComparatorByCoordinate
 
+import random
+
 if typing.TYPE_CHECKING:
     from main import Window
 
@@ -38,7 +40,7 @@ class VectorComparer(QWidget):
         else:
             self.lock_pivot_button.setDisabled(True)
 
-    def lock_pivot(self):
+    def lock_unlock_pivot(self):
         _translate = QtCore.QCoreApplication.translate
 
         if not self.pivot_vector.check_all_filled():
@@ -68,16 +70,19 @@ class VectorComparer(QWidget):
         if not self.defined_vectors and not self.solver:
             self.run_button.setDisabled(True)
 
-    def add_vector(self):
-        if not self.defined_vectors:
-            self.run_button.setDisabled(False)
-
+    def add_vector_action(self):
         if not self.vector_definer.check_all_filled():
             _translate = QtCore.QCoreApplication.translate
             QMessageBox.warning(self, _translate("MainWindow", "Adding failed"), _translate("MainWindow", "Make sure all vector fields have numbers"))
             return
 
-        new_defined_vector = VectorDefined(self.vector_definer.vector_data, self.added_vectors_area)
+        self.add_vector(self.vector_definer.vector_data)
+
+    def add_vector(self, vector_data: typing.List[int]):
+        if not self.defined_vectors:
+            self.run_button.setDisabled(False)
+            
+        new_defined_vector = VectorDefined(vector_data, self.added_vectors_area)
         self.added_vectors_layout.addWidget(new_defined_vector)
         new_defined_vector.pushButton.clicked.connect(partial(self.remove_vector, new_defined_vector))
         self.defined_vectors.append(new_defined_vector)
@@ -90,6 +95,8 @@ class VectorComparer(QWidget):
             self.pause_button.setText(_translate("MainWindow", "Pause"))
             self.add_vector_button.setDisabled(True)
             self.lock_pivot_button.setDisabled(True)
+            self.reset_button.setDisabled(True)
+            self.test_button.setDisabled(True)
             self.pause_button.setDisabled(False)
             self.main_window.tabWidget.tabBar().setDisabled(True)
 
@@ -119,13 +126,15 @@ class VectorComparer(QWidget):
         self.pause_button.setDisabled(True)
         self.lock_pivot_button.setDisabled(False)
         self.run_button.setDisabled(True)
+        self.reset_button.setDisabled(False)
+        self.test_button.setDisabled(False)
         self.main_window.tabWidget.setDisabled(False)
         self.run_button.setText(_translate("MainWindow", "Run"))
 
-        for vector in self.defined_vectors:
-            self.remove_vector(vector)
+        while self.defined_vectors:
+            self.remove_vector(self.defined_vectors[0])
 
-        self.lock_pivot()
+        self.lock_unlock_pivot()
 
     def pause_resume_automata(self):
         _translate = QtCore.QCoreApplication.translate
@@ -137,6 +146,34 @@ class VectorComparer(QWidget):
             else:
                 self.pause_button.setText(_translate("MainWindow", "Pause"))
                 self.solver.timer.start()
+
+    def clear_inputs(self):
+        if not self.pivot_vector.line_edits[-1].isEnabled():
+            self.lock_unlock_pivot()
+
+        while self.defined_vectors:
+            self.remove_vector(self.defined_vectors[0])
+
+        self.pivot_vector.line_edits[0].setText("")
+        self.pivot_vector.line_edits[-1].setText("")
+        while self.pivot_vector.vector_size:
+            self.pivot_vector.line_edits[-2].setText("")
+            self.pivot_vector.process_line_edit_finished()
+
+        self.lock_button_react()
+
+    def create_test_data(self):
+        self.clear_inputs()
+
+        for i in range(2):
+            self.pivot_vector.line_edits[i].setText(str(random.randrange(-2, 3)))
+            self.pivot_vector.process_line_edit_finished()
+
+        for i in range(-2, 3):
+            for j in range(-2, 3):
+                self.add_vector([i, j])
+
+        self.lock_unlock_pivot()
 
 
     def setup_ui(self):
@@ -359,6 +396,14 @@ class VectorComparer(QWidget):
         self.test_button.setSizePolicy(sizePolicy)
         self.test_button.setObjectName("test_button")
         self.horizontalLayout.addWidget(self.test_button)
+        self.reset_button = QPushButton(self.widget_3)
+        sizePolicy = QSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Fixed)
+        sizePolicy.setHorizontalStretch(1)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.reset_button.sizePolicy().hasHeightForWidth())
+        self.reset_button.setSizePolicy(sizePolicy)
+        self.reset_button.setObjectName("reset_button")
+        self.horizontalLayout.addWidget(self.reset_button)
         self.widget_5 = QWidget(self.widget_3)
         sizePolicy = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Preferred)
         sizePolicy.setHorizontalStretch(1)
@@ -378,7 +423,7 @@ class VectorComparer(QWidget):
         self.horizontalLayout.addWidget(self.pause_button)
         self.run_button = QPushButton(self.widget_3)
         sizePolicy = QSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Fixed)
-        sizePolicy.setHorizontalStretch(2)
+        sizePolicy.setHorizontalStretch(1)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.run_button.sizePolicy().hasHeightForWidth())
         self.run_button.setSizePolicy(sizePolicy)
@@ -388,10 +433,12 @@ class VectorComparer(QWidget):
         self.verticalLayout_8.addWidget(self.widget_3)
         self.verticalLayout_10.addWidget(self.widget_10)
 
-        self.lock_pivot_button.clicked.connect(self.lock_pivot)
-        self.add_vector_button.clicked.connect(self.add_vector)
+        self.lock_pivot_button.clicked.connect(self.lock_unlock_pivot)
+        self.add_vector_button.clicked.connect(self.add_vector_action)
         self.run_button.clicked.connect(self.run_automata)
         self.pause_button.clicked.connect(self.pause_resume_automata)
+        self.reset_button.clicked.connect(self.clear_inputs)
+        self.test_button.clicked.connect(self.create_test_data)
         
         self.retranslate_ui()
 
@@ -405,3 +452,4 @@ class VectorComparer(QWidget):
         self.test_button.setText(_translate("MainWindow", "Test"))
         self.pause_button.setText(_translate("MainWindow", "Pause"))
         self.run_button.setText(_translate("MainWindow", "Run"))
+        self.reset_button.setText(_translate("MainWindow", "Reset"))

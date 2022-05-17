@@ -42,7 +42,7 @@ def generate_equals_solver_automaton(formula: typing.List[int]) -> RenderedAutom
     accepting_states_0: typing.List[typing.Tuple[FAState, str]] = []
     accepting_states_others: typing.List[typing.Tuple[FAState, str]] = []
 
-    LEFTOVER_MARKER = "."
+    LEFTOVER_MARKER = "↑"
 
     while unprocessed:
         ptr_state = unprocessed.pop(0)

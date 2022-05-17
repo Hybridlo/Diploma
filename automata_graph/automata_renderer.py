@@ -105,11 +105,7 @@ class VectorComparatorByCoordinate:
         pivot_coord = self.pivot_vector.pop(0)
         compare_coord = self.current_comparing_vector.pop(0)
 
-        pivot_sign, pivot_coord_binary = transform_number_big_endian(pivot_coord)
-        compare_sign, compare_coord_binary = transform_number_big_endian(compare_coord)
-
-        pivot_coord_binary = pivot_sign + pivot_coord_binary.rjust(len(compare_coord_binary), "0")
-        compare_coord_binary = compare_sign + compare_coord_binary.rjust(len(pivot_coord_binary)-1, "0")
+        pivot_coord_binary, compare_coord_binary = transform_number_big_endian([pivot_coord, compare_coord])
 
         self.current_pivot_coordinate = pivot_coord_binary + f" ({pivot_coord})"
         self.current_comparing_coordinate = compare_coord_binary + f" ({compare_coord})"
@@ -281,8 +277,6 @@ class HyperplaneComparator:
             self.progress_holder.current_binary_comparing.setText(inp)
 
         if self.comparer.main_window.animation_time:
-            with open("test.svg", "wb") as outfile:
-                outfile.write(xml_data)    # type: ignore
             self.comparer.main_window.svg_widget.load(QByteArray(xml_data))    # type: ignore
 
 
