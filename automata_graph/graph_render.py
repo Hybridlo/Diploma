@@ -14,6 +14,7 @@ class RenderedAutomaton(typing.Generic[_T]):
         graph = nx.DiGraph()
         graph.graph['graph'] = {'rankdir': "LR"}
         self.automaton = automaton
+        graph.add_node("empty", label="", shape="none", height=".0", width=".0")
 
         visited_nodes = []
 
@@ -45,6 +46,7 @@ class RenderedAutomaton(typing.Generic[_T]):
                 graph.add_edge(node.my_number, next_node.my_number, label=edge_label, id=f"edge{node.my_number}-{next_node.my_number}", len=3)
 
         recursive_visit(automaton.initial_state)
+        graph.add_edge("empty", automaton.initial_state.my_number)
 
         agraph = to_agraph(graph)
         agraph.layout(prog="dot")
