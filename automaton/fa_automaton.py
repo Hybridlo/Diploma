@@ -13,8 +13,8 @@ class FAState(AbstractState):
         self.result = result
 
 class FAAutomaton(AbstractAutomaton[FAState]):
-    def __init__(self, initial_state_cls: typing.Type[FAState], is_initial_accepting: bool):
-        super().__init__(initial_state_cls, is_initial_accepting)
+    def __init__(self, initial_state_cls: typing.Type[FAState], is_initial_accepting: bool, result: typing.Optional[str] = None):
+        super().__init__(initial_state_cls, is_initial_accepting, result)
         
     def check_accepting(self):
         if not self.current_state:
