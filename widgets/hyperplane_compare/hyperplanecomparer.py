@@ -434,7 +434,7 @@ class HyperplaneComparer(QWidget):
         self.verticalLayout_10.addWidget(self.widget_10)
 
         self.lock_formula_button.clicked.connect(self.lock_unlock_formula)
-        self.add_vector_button.clicked.connect(self.add_vector)
+        self.add_vector_button.clicked.connect(self.add_vector_action)
         self.run_button.clicked.connect(self.run_abort_automata)
         self.pause_button.clicked.connect(self.pause_resume_automata)
         self.reset_button.clicked.connect(self.clear_inputs)
