@@ -105,7 +105,7 @@ class HyperplaneComparingProgress(QWidget):
 
     def retranslateUi(self):
         _translate = QtCore.QCoreApplication.translate
-        self.label_4.setText(_translate("MainWindow", "Formula:"))
-        self.label_18.setText(_translate("MainWindow", "Comparing vector:"))
-        self.label_19.setText(_translate("MainWindow", "Comparison results:"))
+        self.label_4.setText(_translate("MainWindow", "Comparing vector:"))
+        self.label_18.setText(_translate("MainWindow", "Comparison results:"))
+        self.label_19.setText(_translate("MainWindow", "Formula:"))
         self.label_28.setText(_translate("MainWindow", "Currently comparing:"))
