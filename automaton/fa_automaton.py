@@ -5,6 +5,8 @@ import typing
 from automaton.base_automaton import AbstractState, AbstractAutomaton
 
 class FAState(AbstractState):
+    __slots__ = ("is_accepting", "transitions", "parent_automaton", "my_number", "result")
+
     is_accepting: bool
 
     def __init__(self, parent_automaton: FAAutomaton, is_accepting: bool, result: typing.Optional[str] = None):

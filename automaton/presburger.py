@@ -1,7 +1,8 @@
 import typing
 import itertools
+import typing_extensions
 from automaton.fa_automaton import FAAutomaton, FAState
-from automata_graph.automata_renderer import RenderedAutomaton
+from automata_graph.graph_render import RenderedAutomaton
 from utils.const import ComparisonValues
 
 
@@ -21,7 +22,19 @@ def calc_formula_product(bits: str, coeffs: typing.List[int]):
 
     return result
 
+@typing.overload
 def generate_equals_solver_automaton(formula: typing.List[int]) -> RenderedAutomaton[FAState]:
+    ...
+
+@typing.overload
+def generate_equals_solver_automaton(formula: typing.List[int], graphical: typing_extensions.Literal[True]) -> RenderedAutomaton[FAState]:
+    ...
+
+@typing.overload
+def generate_equals_solver_automaton(formula: typing.List[int], graphical: typing_extensions.Literal[False]) -> FAAutomaton:
+    ...
+
+def generate_equals_solver_automaton(formula: typing.List[int], graphical: bool = True) -> typing.Union[RenderedAutomaton[FAState], FAAutomaton]:
     """
     takes in an equation formula in a form of list of ints
 
@@ -91,20 +104,27 @@ def generate_equals_solver_automaton(formula: typing.List[int]) -> RenderedAutom
         accepting_state = FAState(automaton, True, ComparisonValues.equal)
         old_transition_state, res = state.transitions[transition]       # res will always be None, but let it be
 
-        state.set_transition(transition, accepting_state)
-        accepting_state.transitions = state.transitions
+        if state.transitions[transition] != state:
+            accepting_state.transitions = state.transitions[transition][0].transitions
+            state.set_transition(transition, accepting_state)
 
-        if old_transition_state is not state:
-            accepting_state.transitions[transition] = (old_transition_state, res)
+        else:
+            state.set_transition(transition, accepting_state)
+            accepting_state.transitions = state.transitions
+
 
     for state, transition in accepting_states_others:
         accepting_state = FAState(automaton, True, ComparisonValues.greater)
         old_transition_state, res = state.transitions[transition]       # res will always be None, but let it be
 
-        state.set_transition(transition, accepting_state)
-        accepting_state.transitions = state.transitions
+        if state.transitions[transition] != state:
+            accepting_state.transitions = state.transitions[transition][0].transitions
+            state.set_transition(transition, accepting_state)
 
-        if old_transition_state is not state:
-            accepting_state.transitions[transition] = (old_transition_state, res)
+        else:
+            state.set_transition(transition, accepting_state)
+            accepting_state.transitions = state.transitions
 
-    return RenderedAutomaton(automaton)
+    if graphical:
+        return RenderedAutomaton(automaton)
+    return automaton
