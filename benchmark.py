@@ -60,11 +60,10 @@ def benchmark(formula_length: int, formula_coeff_modulo_limit: int):
     solving_automata.run_on_input("|".join(automata_input))
 
     result.append((time.perf_counter_ns() - start) // runs)
+    result.append(solving_automata.state_counter)
 
-
-    print(manual_check_res, solving_automata.state_counter, solving_automata.current_state and solving_automata.current_state.result)
-
-    print(f"formula_length = {formula_length}, modulo_max = {formula_coeff_modulo_limit}, {result}")
+    print(f"formula_length = {formula_length}, modulo_max = {formula_coeff_modulo_limit}")
+    print(f"naive solve time: {result[0]}ns, automata build time: {result[1]}ns, automata solve time: {result[2]}ns, automata state amount: {result[3]}")
 
 benchmark(3, 10)
 benchmark(3, 20)
